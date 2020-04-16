@@ -8,7 +8,7 @@ let catererSchema = new Schema({
   description: { type: String, required: true },
   email: { type: String, required: true, select: false },
   password: { type: String, required: true, select: false },
-  phone: { type: String, required: true },
+  phone: { type: String, required: true, select: false },
   minimum_order_quantity: { type: Number, required: true },
   // lead time is hours
   lead_time: { type: Number, required: true },
