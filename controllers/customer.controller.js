@@ -15,7 +15,7 @@ exports.signup = async (req, res) => {
   if (!errors.isEmpty()) {
     return res.status(422).json({
       message: "Server side validation failed",
-      errors: errors.array()
+      errors: errors.array(),
     });
   }
   //create customer object
@@ -24,31 +24,31 @@ exports.signup = async (req, res) => {
     last_name: req.body.last_name,
     email: req.body.email,
     password: req.body.password,
-    phone: req.body.phone
+    phone: req.body.phone,
   });
 
   // Register Customer
   await customer
     .save()
-    .then(customer => {
+    .then((customer) => {
       // Create an empty cart for the customer
       const cart = new Cart({
         customer_id: customer.id,
-        cartItems: []
+        cartItems: [],
       });
 
       return cart.save();
     })
-    .then(cartObj => {
+    .then((cartObj) => {
       // Create a verification token for this Customer
       const token = new Token({
         _userId: customer.id,
-        token: crypto.randomBytes(16).toString("hex")
+        token: crypto.randomBytes(16).toString("hex"),
       });
 
       return token.save();
     })
-    .then(tokenObj => {
+    .then((tokenObj) => {
       const authToken = jwt.sign(
         { email: customer.email, userId: customer.id },
         "secret",
@@ -59,7 +59,7 @@ exports.signup = async (req, res) => {
         message:
           "Customer Registered Successfully, A verification email has will be sent",
         token: authToken,
-        id: tokenObj._userId
+        id: tokenObj._userId,
       });
       return transporter.sendMail({
         to: req.body.email,
@@ -67,17 +67,17 @@ exports.signup = async (req, res) => {
         subject: "Welcome " + req.body.first_name,
         html: `
         <p>Click this <a href="http://${req.headers.host}/api/email_confirmation/${tokenObj.token}">link</a> to verify your email.</p>
-       `
+       `,
       });
     })
-    .then(result => {
+    .then((result) => {
       console.log(result);
     })
-    .catch(err => {
+    .catch((err) => {
       res.json({
         status: "error",
         message: "Something went wrong",
-        error: err
+        error: err,
       });
     });
 };
@@ -88,20 +88,20 @@ exports.login = async (req, res) => {
   if (!errors.isEmpty()) {
     return res.status(422).json({
       message: "Server side validation failed",
-      errors: errors.array()
+      errors: errors.array(),
     });
   }
   await Customer.findOne({
     $or: [
       {
-        $and: [{ email: req.body.email }, { password: req.body.password }]
+        $and: [{ email: req.body.email }, { password: req.body.password }],
       },
       {
-        $and: [{ phone: req.body.phone }, { password: req.body.password }]
-      }
-    ]
+        $and: [{ phone: req.body.phone }, { password: req.body.password }],
+      },
+    ],
   })
-    .then(result => {
+    .then((result) => {
       if (result) {
         // console.log(result);
         const token = jwt.sign(
@@ -114,22 +114,22 @@ exports.login = async (req, res) => {
           status: "success",
           message: "Login Successfull",
           token: token,
-          userId: result._id.toString()
+          userId: result._id.toString(),
         });
       } else {
         // If Customer doesn't Exists
         res.json({
           status: "failed",
           message: "Invalid Email or Password",
-          data: result
+          data: result,
         });
       }
     })
-    .catch(err => {
+    .catch((err) => {
       res.json({
         status: "error",
         message: "Something went wrong",
-        error: err
+        error: err,
       });
     });
 };
@@ -137,26 +137,26 @@ exports.login = async (req, res) => {
 // Customer Details
 exports.customer_details = async (req, res) => {
   await Customer.findById(req.body.userId)
-    .then(customer => {
+    .then((customer) => {
       if (customer) {
         res.json({
           status: "success",
           message: "Customer Found",
-          data: customer
+          data: customer,
         });
       } else {
         res.json({
           status: "failed",
           message: "Customer Not Found",
-          data: result
+          data: result,
         });
       }
     })
-    .catch(err => {
+    .catch((err) => {
       res.json({
         status: "error",
         message: "Something went wrong",
-        error: err
+        error: err,
       });
     });
 };
@@ -164,18 +164,18 @@ exports.customer_details = async (req, res) => {
 // Fetch All Customers
 exports.customers = async (req, res) => {
   await Customer.find()
-    .then(result => {
+    .then((result) => {
       res.json({
         status: "success",
         message: result.length + " Customers Found",
-        data: result
+        data: result,
       });
     })
-    .catch(err => {
+    .catch((err) => {
       res.json({
         status: "error",
         message: "Something went wrong",
-        error: err
+        error: err,
       });
     });
 };
@@ -186,7 +186,7 @@ exports.update_customer = async (req, res) => {
   if (!errors.isEmpty()) {
     return res.status(422).json({
       message: "Server side validation failed",
-      errors: errors.array()
+      errors: errors.array(),
     });
   }
   //if email field is updated
@@ -202,30 +202,30 @@ exports.update_customer = async (req, res) => {
         res.json({
           status: "error",
           message: "Something went wrong",
-          error: err
+          error: err,
         });
       } else {
         if (customer) {
           if (customer.verified) {
             res.json({
               status: "success",
-              message: "Customer Updated Successfully"
+              message: "Customer Updated Successfully",
             });
           } else {
             // Create a verification token for this Customer
             const token = new Token({
               _userId: customer.id,
-              token: crypto.randomBytes(16).toString("hex")
+              token: crypto.randomBytes(16).toString("hex"),
             });
 
             token
               .save()
-              .then(tokenObj => {
+              .then((tokenObj) => {
                 res.json({
                   status: "success",
                   message:
                     "Customer Updated Successfully, A verification email has will be sent",
-                  id: tokenObj._userId
+                  id: tokenObj._userId,
                 });
                 return transporter.sendMail({
                   to: req.body.email,
@@ -233,24 +233,24 @@ exports.update_customer = async (req, res) => {
                   subject: "Welcome " + req.body.first_name,
                   html: `
                 <p>Click this <a href="http://${req.headers.host}/api/email_confirmation/${tokenObj.token}">link</a> to verify your email.</p>
-               `
+               `,
                 });
               })
-              .then(result => {
+              .then((result) => {
                 console.log(result);
               })
-              .catch(err => {
+              .catch((err) => {
                 res.json({
                   status: "error",
                   message: "Something went wrong",
-                  error: err
+                  error: err,
                 });
               });
           }
         } else {
           res.json({
             status: "failed",
-            message: "Customer Not Found"
+            message: "Customer Not Found",
           });
         }
       }
@@ -261,26 +261,28 @@ exports.update_customer = async (req, res) => {
 // Delete Customer
 exports.delete_customer = async (req, res) => {
   await Customer.findByIdAndDelete(req.body.userId)
-    .then(result => {
+    .then((result) => {
       if (result) {
-        Cart.findOneAndRemove({ customer_id: req.body.userId }).then(result => {
-          res.json({
-            status: "success",
-            message: "Customer Deleted Successfully"
-          });
-        });
+        Cart.findOneAndRemove({ customer_id: req.body.userId }).then(
+          (result) => {
+            res.json({
+              status: "success",
+              message: "Customer Deleted Successfully",
+            });
+          }
+        );
       } else {
         res.json({
           status: "failed",
-          message: "Customer Not Found"
+          message: "Customer Not Found",
         });
       }
     })
-    .catch(err => {
+    .catch((err) => {
       res.json({
         status: "error",
         message: "Something went wrong",
-        error: err
+        error: err,
       });
     });
 };
@@ -290,32 +292,32 @@ exports.customer_confirm_email = async (req, res) => {
   if (!errors.isEmpty()) {
     return res.status(422).json({
       message: "Server side validation failed",
-      errors: errors.array()
+      errors: errors.array(),
     });
   }
   await Token.findOne({ token: req.params.token })
-    .then(tokenObj => {
+    .then((tokenObj) => {
       if (!tokenObj) {
         res.json({
           status: "failed",
-          message: "Token expired or unable to find it."
+          message: "Token expired or unable to find it.",
         });
         return;
       }
       return Customer.findOne({ _id: tokenObj._userId });
     })
-    .then(customer => {
+    .then((customer) => {
       if (!customer) {
         res.json({
           status: "failed",
-          message: "Customer Not Found"
+          message: "Customer Not Found",
         });
         return;
       }
       if (customer.verified) {
         res.json({
           status: 400,
-          message: "Customer already been verified"
+          message: "Customer already been verified",
         });
         return;
       }
@@ -325,14 +327,14 @@ exports.customer_confirm_email = async (req, res) => {
     .then(() => {
       res.json({
         status: "success",
-        message: "Customer successfully verified"
+        message: "Customer successfully verified",
       });
     })
-    .catch(err => {
+    .catch((err) => {
       res.json({
         status: "error",
         message: "Something went wrong",
-        error: err
+        error: err,
       });
     });
 };

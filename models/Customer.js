@@ -16,16 +16,16 @@ const customerSchema = new Schema({
   first_name: { type: String, required: true },
   last_name: { type: String, required: true },
   email: { type: String, required: true },
-  password: { type: String, required: true },
+  password: { type: String, required: true, select: false }, // by default exclude password from the query result
   phone: { type: String, required: true },
   verified: { type: Boolean, required: true, default: false },
   // cart: [cartSchema],
   resetToken: { type: String },
-  resetTokenExpiration: { type: Date }
+  resetTokenExpiration: { type: Date },
 });
 
-customerSchema.statics.isEmailRegistered = function(email) {
-  return this.find({ email: email }).then(result => {
+customerSchema.statics.isEmailRegistered = function (email) {
+  return this.find({ email: email }).then((result) => {
     //if count.length is > 0 it implies that email or phone is already registered
     if (result.length > 0) {
       //
@@ -37,8 +37,8 @@ customerSchema.statics.isEmailRegistered = function(email) {
   });
 };
 
-customerSchema.statics.isPhoneRegistered = function(phone) {
-  return this.find({ phone: phone }).then(result => {
+customerSchema.statics.isPhoneRegistered = function (phone) {
+  return this.find({ phone: phone }).then((result) => {
     //if count.length is > 0 it implies that email or phone is already registered
     if (result.length > 0) {
       //
@@ -50,8 +50,8 @@ customerSchema.statics.isPhoneRegistered = function(phone) {
   });
 };
 
-customerSchema.statics.isCustomerEmail = function(email) {
-  return this.find({ email: email }).then(result => {
+customerSchema.statics.isCustomerEmail = function (email) {
+  return this.find({ email: email }).then((result) => {
     //if count.length is > 0 it implies that email or phone is already registered
     if (result.length > 0) {
       //
@@ -63,8 +63,8 @@ customerSchema.statics.isCustomerEmail = function(email) {
   });
 };
 
-customerSchema.statics.isCustomerPhone = function(phone) {
-  return this.find({ phone: phone }).then(result => {
+customerSchema.statics.isCustomerPhone = function (phone) {
+  return this.find({ phone: phone }).then((result) => {
     //if count.length is > 0 it implies that email or phone is already registered
     if (result.length > 0) {
       //
