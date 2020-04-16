@@ -6,8 +6,8 @@ mongoose.set("useFindAndModify", false);
 let catererSchema = new Schema({
   name: { type: String, required: true },
   description: { type: String, required: true },
-  email: { type: String, required: true },
-  password: { type: String, required: true },
+  email: { type: String, required: true, select: false },
+  password: { type: String, required: true, select: false },
   phone: { type: String, required: true },
   minimum_order_quantity: { type: Number, required: true },
   // lead time is hours
@@ -16,11 +16,11 @@ let catererSchema = new Schema({
   menu_starting_from: { type: Number, required: true },
   delivery_fee: { type: Number, required: true },
   live_kitchen: { type: Boolean, required: true },
-  image: { type: String, required: true }
+  image: { type: String, required: true },
 });
 
-catererSchema.statics.isEmailRegistered = function(email) {
-  return this.find({ email: email }).then(result => {
+catererSchema.statics.isEmailRegistered = function (email) {
+  return this.find({ email: email }).then((result) => {
     //if count.length is > 0 it implies that email or phone is already registered
     if (result.length > 0) {
       //
@@ -32,8 +32,8 @@ catererSchema.statics.isEmailRegistered = function(email) {
   });
 };
 
-catererSchema.statics.isPhoneRegistered = function(phone) {
-  return this.find({ phone: phone }).then(result => {
+catererSchema.statics.isPhoneRegistered = function (phone) {
+  return this.find({ phone: phone }).then((result) => {
     //if count.length is > 0 it implies that email or phone is already registered
     if (result.length > 0) {
       //
@@ -45,8 +45,8 @@ catererSchema.statics.isPhoneRegistered = function(phone) {
   });
 };
 
-catererSchema.statics.isCatererEmail = function(email) {
-  return this.find({ email: email }).then(result => {
+catererSchema.statics.isCatererEmail = function (email) {
+  return this.find({ email: email }).then((result) => {
     //if count.length is > 0 it implies that email or phone is already registered
     if (result.length > 0) {
       //
@@ -58,8 +58,8 @@ catererSchema.statics.isCatererEmail = function(email) {
   });
 };
 
-catererSchema.statics.isCatererPhone = function(phone) {
-  return this.find({ phone: phone }).then(result => {
+catererSchema.statics.isCatererPhone = function (phone) {
+  return this.find({ phone: phone }).then((result) => {
     //if count.length is > 0 it implies that email or phone is already registered
     if (result.length > 0) {
       //

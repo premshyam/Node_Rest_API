@@ -1,4 +1,4 @@
-module.exports = app => {
+module.exports = (app) => {
   const caterer_controller = require("../controllers/caterer.controller");
   const upload = require("../config/caterer_image.config.js");
   const Caterer = require("../models/Caterer");
@@ -32,15 +32,15 @@ module.exports = app => {
       body("availability", "Enter a boolean value").isBoolean(),
       body("live_kitchen", "Enter a boolean value").isBoolean(),
       body("delivery_fee", "Enter a valid amount for delivery fee").isInt({
-        gt: 0
+        gt: 0,
       }),
       body(
         "lead_time",
         "Enter a valid number of hours for lead time, it should be more than 24"
       ).isInt({
-        gt: 24
+        gt: 24,
       }),
-      body("menu_starting_from", "Enter a valid amount").isInt({ gt: 0 })
+      body("menu_starting_from", "Enter a valid amount").isInt({ gt: 0 }),
     ],
     caterer_controller.signup
   );
@@ -53,7 +53,7 @@ module.exports = app => {
         .if(body("phone").exists())
         .isMobilePhone()
         .isLength({ min: 10, max: 10 })
-        .custom(email => {
+        .custom((email) => {
           return Caterer.isCatererPhone(email);
         }),
       body(
@@ -62,9 +62,9 @@ module.exports = app => {
       ).matches(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9]).{8,}$/, "i"),
       body("email", "Enter valid registered email")
         .if(body("email").exists())
-        .custom(email => {
+        .custom((email) => {
           return Caterer.isCatererEmail(email);
-        })
+        }),
     ],
     caterer_controller.login
   );
@@ -101,7 +101,7 @@ module.exports = app => {
       body("email", "Enter valid email").isEmail(),
       body("phone", "Enter a valid phone number")
         .isMobilePhone()
-        .isLength({ min: 10, max: 10 })
+        .isLength({ min: 10, max: 10 }),
     ],
     caterer_controller.update_caterer
   );
