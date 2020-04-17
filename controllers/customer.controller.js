@@ -1,3 +1,4 @@
+const bcrypt = require("bcryptjs");
 const Customer = require("../models/Customer");
 const Token = require("../models/Token");
 const Cart = require("../models/Cart");
@@ -18,12 +19,18 @@ exports.signup = async (req, res) => {
       errors: errors.array(),
     });
   }
+  let password = "";
+  // hash the user password
+  await bcrypt.hash(req.body.password, 12).then((hashedPassword) => {
+    // console.log(hashedPassword);
+    password = hashedPassword;
+  });
   //create customer object
   const customer = new Customer({
     first_name: req.body.first_name,
     last_name: req.body.last_name,
     email: req.body.email,
-    password: req.body.password,
+    password: password,
     phone: req.body.phone,
   });
 
@@ -31,6 +38,7 @@ exports.signup = async (req, res) => {
   await customer
     .save()
     .then((customer) => {
+      // console.log(customer);
       // Create an empty cart for the customer
       const cart = new Cart({
         customer_id: customer.id,
@@ -91,37 +99,54 @@ exports.login = async (req, res) => {
       errors: errors.array(),
     });
   }
+  const password = req.body.password;
+  let id = "";
   await Customer.findOne({
     $or: [
       {
-        $and: [{ email: req.body.email }, { password: req.body.password }],
+        email: req.body.email,
       },
       {
-        $and: [{ phone: req.body.phone }, { password: req.body.password }],
+        phone: req.body.phone,
       },
     ],
   })
+    .select("email password")
+    .then((customer) => {
+      if (!customer) {
+        // If Customer doesn't Exists
+        res.json({
+          status: "failed",
+          message: "Invalid Email, Phone or password",
+        });
+      }
+      // console.log(customer);
+      id = customer._id;
+      // compare the password to the hashed password
+      return bcrypt.compare(password, customer.password);
+    })
     .then((result) => {
+      // console.log(result);
       if (result) {
-        // console.log(result);
+        // generate auth token
         const token = jwt.sign(
-          { email: result.email, userId: result._id },
+          { email: req.body.email, userId: id },
           "secret",
-          { expiresIn: "1h" }
+          {
+            expiresIn: "1h",
+          }
         );
         // If Customer Exists
         res.json({
           status: "success",
           message: "Login Successfull",
           token: token,
-          userId: result._id.toString(),
+          userId: id.toString(),
         });
       } else {
-        // If Customer doesn't Exists
         res.json({
           status: "failed",
-          message: "Invalid Email or Password",
-          data: result,
+          message: "Invalid Email, Phone or password",
         });
       }
     })
