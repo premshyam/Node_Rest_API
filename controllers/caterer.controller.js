@@ -11,7 +11,7 @@ var imgUrl = null;
 var urlImage = null;
 
 // Image Upload
-const uploadImage = async image => {
+const uploadImage = async (image) => {
   console.log("Image is " + image);
   imgUrl = await cloudinary.uploader.upload(
     //image path
@@ -19,12 +19,12 @@ const uploadImage = async image => {
     //cloudinary destination folder
     { folder: "user_images/" },
     //call back on success
-    result => {
+    (result) => {
       console.log(result.url);
       return result.url;
     },
     //call back on error
-    err => {
+    (err) => {
       console.log("Error is here " + err);
     }
   );
@@ -37,7 +37,7 @@ exports.signup = async (req, res) => {
   if (!errors.isEmpty()) {
     return res.status(422).json({
       message: "Server side validation failed",
-      errors: errors.array()
+      errors: errors.array(),
     });
   }
 
@@ -61,11 +61,11 @@ exports.signup = async (req, res) => {
 
   // Check if Caterer Already Exists with same Email
   await Caterer.find({ email: req.body.email })
-    .then(count => {
+    .then((count) => {
       if (count.length > 0) {
         res.json({
           status: "failed",
-          message: "Email Already Exists"
+          message: "Email Already Exists",
         });
       } else {
         const caterer = new Caterer({
@@ -80,34 +80,34 @@ exports.signup = async (req, res) => {
           menu_starting_from: req.body.menu_starting_from,
           delivery_fee: req.body.delivery_fee,
           live_kitchen: req.body.live_kitchen,
-          image: urlImage
+          image: urlImage,
         });
 
         // Register Caterer
 
         caterer
           .save()
-          .then(result => {
+          .then((result) => {
             res.json({
               status: "success",
               message: "Caterer Registered Successfully",
-              data: result
+              data: result,
             });
           })
-          .catch(err => {
+          .catch((err) => {
             res.json({
               status: "error",
               message: "Something went wrong",
-              error: err
+              error: err,
             });
           });
       }
     })
-    .catch(err => {
+    .catch((err) => {
       res.json({
         status: "error",
         message: "Something went wrong",
-        error: err
+        error: err,
       });
     });
 };
@@ -118,20 +118,20 @@ exports.login = async (req, res) => {
   if (!errors.isEmpty()) {
     return res.status(422).json({
       message: "Server side validation failed",
-      errors: errors.array()
+      errors: errors.array(),
     });
   }
   await Caterer.findOne({
     $or: [
       {
-        $and: [{ email: req.body.email }, { password: req.body.password }]
+        $and: [{ email: req.body.email }, { password: req.body.password }],
       },
       {
-        $and: [{ phone: req.body.phone }, { password: req.body.password }]
-      }
-    ]
+        $and: [{ phone: req.body.phone }, { password: req.body.password }],
+      },
+    ],
   })
-    .then(result => {
+    .then((result) => {
       // console.log(result);
       if (result) {
         const token = jwt.sign(
@@ -144,22 +144,22 @@ exports.login = async (req, res) => {
           status: "success",
           message: "Login Successfull",
           token: token,
-          userId: result._id.toString()
+          userId: result._id.toString(),
         });
       } else {
         // If Caterer doesn't Exists
         res.json({
           status: "failed",
           message: "Invalid Email or Password",
-          data: result
+          data: result,
         });
       }
     })
-    .catch(err => {
+    .catch((err) => {
       res.json({
         status: "error",
         message: "Something went wrong",
-        error: err
+        error: err,
       });
     });
 };
@@ -167,26 +167,26 @@ exports.login = async (req, res) => {
 // Caterer Details
 exports.caterer_details = async (req, res) => {
   await Caterer.findOne({ _id: req.body.userId })
-    .then(result => {
+    .then((result) => {
       if (result) {
         res.json({
           status: "success",
           message: "Caterer Found",
-          data: result
+          data: result,
         });
       } else {
         res.json({
           status: "failed",
           message: "Caterer Not Found",
-          data: result
+          data: result,
         });
       }
     })
-    .catch(err => {
+    .catch((err) => {
       res.json({
         status: "error",
         message: "Something went wrong",
-        error: err
+        error: err,
       });
     });
 };
@@ -195,18 +195,18 @@ exports.caterer_details = async (req, res) => {
 
 exports.caterers = async (req, res) => {
   await Caterer.find()
-    .then(result => {
+    .then((result) => {
       res.json({
         status: "success",
         message: result.length + " Caterers Found",
-        data: result
+        data: result,
       });
     })
-    .catch(err => {
+    .catch((err) => {
       res.json({
         status: "error",
         message: "Something went wrong",
-        error: err
+        error: err,
       });
     });
 };
@@ -218,7 +218,7 @@ exports.update_caterer = async (req, res) => {
   if (!errors.isEmpty()) {
     return res.status(422).json({
       message: "Server side validation failed",
-      errors: errors.array()
+      errors: errors.array(),
     });
   }
   await Caterer.findByIdAndUpdate(
@@ -229,18 +229,18 @@ exports.update_caterer = async (req, res) => {
         res.json({
           status: "error",
           message: "Something went wrong",
-          error: err
+          error: err,
         });
       } else {
         if (caterer) {
           res.json({
             status: "success",
-            message: "Caterer Updated Successfully"
+            message: "Caterer Updated Successfully",
           });
         } else {
           res.json({
             status: "failed",
-            message: "Caterer Not Found"
+            message: "Caterer Not Found",
           });
         }
       }
@@ -252,24 +252,24 @@ exports.update_caterer = async (req, res) => {
 
 exports.delete_caterer = async (req, res) => {
   await Caterer.findByIdAndDelete(req.body.userId)
-    .then(result => {
+    .then((result) => {
       if (result) {
         res.json({
           status: "success",
-          message: "Caterer Deleted Successfully"
+          message: "Caterer Deleted Successfully",
         });
       } else {
         res.json({
           status: "failed",
-          message: "Caterer Not Found"
+          message: "Caterer Not Found",
         });
       }
     })
-    .catch(err => {
+    .catch((err) => {
       res.json({
         status: "error",
         message: "Something went wrong",
-        error: err
+        error: err,
       });
     });
 };

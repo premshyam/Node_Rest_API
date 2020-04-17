@@ -7,7 +7,7 @@ let menuSchema = new Schema({
   caterer_id: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Caterer",
-    required: true
+    required: true,
   },
   menu_name: { type: String, required: true },
   price: { type: Number, required: true },
@@ -16,6 +16,6 @@ let menuSchema = new Schema({
   main_course: { type: Array, required: false, allowNull: true },
   desserts: { type: Array, required: false, allowNull: true },
   chats: { type: Array, required: false, allowNull: true },
-  beverages: { type: Array, required: false, allowNull: true }
+  beverages: { type: Array, required: false, allowNull: true },
 });
 module.exports = mongoose.model("Menu", menuSchema);

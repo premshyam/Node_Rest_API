@@ -5,6 +5,9 @@ mongoose.set("useFindAndModify", false);
 
 let catererSchema = new Schema({
   name: { type: String, required: true },
+  speciality: { type: Array, required: true },
+  event: { type: Array, required: true },
+  veg: { type: Boolean, required: true },
   description: { type: String, required: true },
   email: { type: String, required: true, select: false },
   password: { type: String, required: true, select: false },
