@@ -195,6 +195,7 @@ exports.caterer_details = async (req, res) => {
 
 exports.caterers = async (req, res) => {
   await Caterer.find()
+    .select("-email -phone")
     .then((result) => {
       res.json({
         status: "success",

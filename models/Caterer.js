@@ -9,9 +9,9 @@ let catererSchema = new Schema({
   event: { type: Array, required: true },
   veg: { type: Boolean, required: true },
   description: { type: String, required: true },
-  email: { type: String, required: true, select: false },
+  email: { type: String, required: true },
   password: { type: String, required: true, select: false },
-  phone: { type: String, required: true, select: false },
+  phone: { type: String, required: true },
   minimum_order_quantity: { type: Number, required: true },
   // lead time is hours
   lead_time: { type: Number, required: true },
