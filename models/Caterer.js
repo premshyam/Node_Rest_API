@@ -7,7 +7,7 @@ let catererSchema = new Schema({
   name: { type: String, required: true },
   speciality: { type: Array, required: true },
   event: { type: Array, required: true },
-  veg: { type: Boolean, required: true },
+  veg: { type: Boolean, required: true, default: false },
   description: { type: String, required: true },
   email: { type: String, required: true },
   password: { type: String, required: true, select: false },
@@ -15,10 +15,10 @@ let catererSchema = new Schema({
   minimum_order_quantity: { type: Number, required: true },
   // lead time is hours
   lead_time: { type: Number, required: true },
-  availability: { type: Boolean, required: true },
+  availability: { type: Boolean, required: true, default: false },
   menu_starting_from: { type: Number, required: true },
   delivery_fee: { type: Number, required: true },
-  live_kitchen: { type: Boolean, required: true },
+  live_kitchen: { type: Boolean, required: true, default: false },
   image: { type: String, required: true },
 });
 
