@@ -1,4 +1,4 @@
-module.exports = app => {
+module.exports = (app) => {
   const menu_controller = require("../controllers/menu.controller");
   const Caterer = require("../models/Caterer");
   const { body, check } = require("express-validator");
@@ -9,8 +9,8 @@ module.exports = app => {
     "/api/create_menu",
     isAuth,
     [
-      body("userId", "not a vaild caterer").custom(catererId => {
-        return Caterer.findById(catererId).then(result => {
+      body("userId", "not a vaild caterer").custom((catererId) => {
+        return Caterer.findById(catererId).then((result) => {
           if (result) {
             //
             return true;
@@ -19,21 +19,21 @@ module.exports = app => {
             return Promise.reject("not a vaild caterer");
           }
         });
-      })
+      }),
     ],
     menu_controller.create_menu
   );
 
   // Fetch All Menus of a caterer
-  app.get("/api/menus/:id", menu_controller.menus);
+  app.get("/api/caterer_menus/:id", menu_controller.caterer_menus);
 
   // Update Menu
   app.put(
     "/api/update_menu/:id",
     isAuth,
     [
-      body("userId", "not a vaild caterer").custom(catererId => {
-        return Caterer.findById(catererId).then(result => {
+      body("userId", "not a vaild caterer").custom((catererId) => {
+        return Caterer.findById(catererId).then((result) => {
           if (result) {
             //
             return true;
@@ -42,7 +42,7 @@ module.exports = app => {
             return Promise.reject("not a vaild caterer");
           }
         });
-      })
+      }),
     ],
     menu_controller.update_menu
   );
@@ -55,8 +55,8 @@ module.exports = app => {
     "/api/delete_menu/:id",
     isAuth,
     [
-      body("userId", "not a vaild caterer").custom(catererId => {
-        return Caterer.findById(catererId).then(result => {
+      body("userId", "not a vaild caterer").custom((catererId) => {
+        return Caterer.findById(catererId).then((result) => {
           if (result) {
             //
             return true;
@@ -65,7 +65,7 @@ module.exports = app => {
             return Promise.reject("not a vaild caterer");
           }
         });
-      })
+      }),
     ],
     menu_controller.delete_menu
   );

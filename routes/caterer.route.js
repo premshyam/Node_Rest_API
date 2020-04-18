@@ -74,6 +74,19 @@ module.exports = (app) => {
     "/api/caterer_details/",
     //Authentication middleware
     isAuth,
+    [
+      body("userId", "not a vaild caterer").custom((catererId) => {
+        return Caterer.findById(catererId).then((result) => {
+          if (result) {
+            //
+            return true;
+          } else {
+            //
+            return Promise.reject("not a vaild caterer");
+          }
+        });
+      }),
+    ],
     caterer_controller.caterer_details
   );
 
@@ -89,17 +102,25 @@ module.exports = (app) => {
     //Caterer field validations
     [
       body("name", "Invalid name, enter 1 to 15 characters only")
+        .if(body("name").exists())
         .trim()
         .isLength({ min: 1, max: 15 }),
       body("description", "Invalid Description, enter 1 to 50 characters")
+        .if(body("description").exists())
         .trim()
         .isLength({ min: 1, max: 50 }),
       body(
         "password",
         "Password should be combination of one uppercase , one lower case, one special char, one digit and min 8 , max 15 char long"
-      ).matches(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9]).{8,}$/, "i"),
-      body("email", "Enter valid email").isEmail(),
+      )
+        .if(body("password").exists())
+        .matches(
+          /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9]).{8,}$/,
+          "i"
+        ),
+      body("email", "Enter valid email").if(body("email").exists()).isEmail(),
       body("phone", "Enter a valid phone number")
+        .if(body("phone").exists())
         .isMobilePhone()
         .isLength({ min: 10, max: 10 }),
     ],

@@ -1,4 +1,4 @@
-module.exports = app => {
+module.exports = (app) => {
   const cart_controller = require("../controllers/cart.controller");
   const Menu = require("../models/Menu");
   const isAuth = require("../middleware/is-auth");
@@ -9,8 +9,8 @@ module.exports = app => {
     "/api/add_item",
     isAuth,
     [
-      body("menu_id", "not a valid menu").custom(menuId => {
-        return Menu.findById(menuId).then(result => {
+      body("menu_id", "not a valid menu").custom((menuId) => {
+        return Menu.findById(menuId).then((result) => {
           if (result && result !== null) {
             //
             // console.log(result);
@@ -21,7 +21,7 @@ module.exports = app => {
           }
         });
       }),
-      body("quantity", "quantity not valid").isNumeric()
+      body("quantity", "quantity not valid").isNumeric(),
     ],
     cart_controller.add_item
   );
@@ -31,8 +31,8 @@ module.exports = app => {
     "/api/remove_item",
     isAuth,
     [
-      body("menu_id", "not a valid menu").custom(menuId => {
-        return Menu.findById(menuId).then(result => {
+      body("menu_id", "not a valid menu").custom((menuId) => {
+        return Menu.findById(menuId).then((result) => {
           if (result && result !== null) {
             //
             console.log(result);
@@ -42,7 +42,7 @@ module.exports = app => {
             return Promise.reject("not a valid menu");
           }
         });
-      })
+      }),
     ],
     cart_controller.remove_item
   );
@@ -52,8 +52,6 @@ module.exports = app => {
 
   // View Customer Cart Items
   app.get("/api/cart_items/", isAuth, cart_controller.cart_items);
-
-  // app.put("/api/update_cart/:itemId", isAuth, cart_controller.update_cart);
 
   app.put("/api/empty_cart/", isAuth, cart_controller.empty_cart);
 };

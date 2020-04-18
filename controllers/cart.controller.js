@@ -26,6 +26,7 @@ exports.add_item = (req, res) => {
               (i) => i.menu_id == item.menu_id
             );
             cartObj.cart[index].quantity = item.quantity;
+            cartObj.cart[index].cartItems = item.cartItems;
           } else {
             cartObj.cart.push(item);
           }
@@ -134,7 +135,7 @@ exports.cart_items = async (req, res) => {
         res.json({
           status: "success",
           message: "Cart Items Found",
-          cart: result,
+          data: result,
         });
       } else {
         res.json({
@@ -152,41 +153,12 @@ exports.cart_items = async (req, res) => {
     });
 };
 
-// Update Cart Item
-// exports.update_cart = async (req, res) => {
-//   await Cart.findByIdAndUpdate(
-//     req.params.itemId,
-//     { $set: req.body },
-//     (err, cart) => {
-//       if (err) {
-//         res.json({
-//           status: "error",
-//           message: "Something went wrong",
-//           error: err
-//         });
-//       } else {
-//         if (cart) {
-//           res.json({
-//             status: "success",
-//             message: "Cart Item Updated Successfully"
-//           });
-//         } else {
-//           res.json({
-//             status: "failed",
-//             message: "Cart Item Not Found"
-//           });
-//         }
-//       }
-//     }
-//   );
-// };
-
 // Delete Cart Item
 exports.empty_cart = async (req, res) => {
   await Cart.findOne({ customer_id: req.body.userId })
     .then((cartObj) => {
       if (cartObj) {
-        cartObj.cartItems = [];
+        cartObj.cart = [];
         return cartObj.save();
       } else {
         res.json({

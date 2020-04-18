@@ -8,7 +8,7 @@ exports.create_menu = async (req, res) => {
   if (!errors.isEmpty()) {
     return res.status(422).json({
       message: "Server side validation failed",
-      errors: errors.array()
+      errors: errors.array(),
     });
   }
   let menu = new Menu({
@@ -20,42 +20,42 @@ exports.create_menu = async (req, res) => {
     main_course: req.body.main_course,
     desserts: req.body.desserts,
     chats: req.body.chats,
-    beverages: req.body.beverages
+    beverages: req.body.beverages,
   });
 
   await menu
     .save()
-    .then(result => {
+    .then((result) => {
       res.json({
         status: "success",
         message: "Menu Create Successfully",
-        data: result
+        data: result,
       });
     })
-    .catch(err => {
+    .catch((err) => {
       res.json({
         status: "error",
         message: "Something went wrong",
-        error: err
+        error: err,
       });
     });
 };
 
 // Fetch All Menus
-exports.menus = async (req, res) => {
+exports.caterer_menus = async (req, res) => {
   await Menu.find({ caterer_id: req.params.id })
-    .then(result => {
+    .then((result) => {
       res.json({
         status: "success",
         message: result.length + " Menus Found",
-        data: result
+        data: result,
       });
     })
-    .catch(err => {
+    .catch((err) => {
       res.json({
         status: "error",
         message: "Something went wrong",
-        error: err
+        error: err,
       });
     });
 };
@@ -66,7 +66,7 @@ exports.update_menu = async (req, res) => {
   if (!errors.isEmpty()) {
     return res.status(422).json({
       message: "Server side validation failed",
-      errors: errors.array()
+      errors: errors.array(),
     });
   }
   await Menu.findByIdAndUpdate(
@@ -77,18 +77,18 @@ exports.update_menu = async (req, res) => {
         res.json({
           status: "error",
           message: "Something went wrong",
-          error: err
+          error: err,
         });
       } else {
         if (menu) {
           res.json({
             status: "success",
-            message: "Menu Updated Successfully"
+            message: "Menu Updated Successfully",
           });
         } else {
           res.json({
             status: "failed",
-            message: "Menu Not Found"
+            message: "Menu Not Found",
           });
         }
       }
@@ -99,26 +99,26 @@ exports.update_menu = async (req, res) => {
 // Menu Details
 exports.menu = async (req, res) => {
   await Menu.findOne({ _id: req.params.id })
-    .then(result => {
+    .then((result) => {
       if (result) {
         res.json({
           status: "success",
           message: "Menu Found",
-          data: result
+          data: result,
         });
       } else {
         res.json({
           status: "failed",
           message: "No Menu Found",
-          data: result
+          data: result,
         });
       }
     })
-    .catch(err => {
+    .catch((err) => {
       res.json({
         status: "error",
         message: "Something went wrong",
-        error: err
+        error: err,
       });
     });
 };
@@ -129,28 +129,28 @@ exports.delete_menu = async (req, res) => {
   if (!errors.isEmpty()) {
     return res.status(422).json({
       message: "Server side validation failed",
-      errors: errors.array()
+      errors: errors.array(),
     });
   }
   await Menu.findByIdAndDelete(req.params.id)
-    .then(result => {
+    .then((result) => {
       if (result) {
         res.json({
           status: "success",
-          message: "Menu Deleted Successfully"
+          message: "Menu Deleted Successfully",
         });
       } else {
         res.json({
           status: "failed",
-          message: "Menu Not Found"
+          message: "Menu Not Found",
         });
       }
     })
-    .catch(err => {
+    .catch((err) => {
       res.json({
         status: "error",
         message: "Something went wrong",
-        error: err
+        error: err,
       });
     });
 };

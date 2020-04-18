@@ -219,6 +219,14 @@ exports.update_customer = async (req, res) => {
     //then set verified field to false
     req.body.verified = false;
   }
+  //check is password field was updated
+  if (req.body.password) {
+    //then hash the new password
+    await bcrypt.hash(req.body.password, 12).then((hashedPassword) => {
+      // console.log(hashedPassword);
+      req.body.password = hashedPassword;
+    });
+  }
   await Customer.findByIdAndUpdate(
     req.body.userId,
     { $set: req.body },
@@ -250,7 +258,7 @@ exports.update_customer = async (req, res) => {
                   status: "success",
                   message:
                     "Customer Updated Successfully, A verification email has will be sent",
-                  id: tokenObj._userId,
+                  // id: tokenObj._userId,
                 });
                 return transporter.sendMail({
                   to: req.body.email,

@@ -166,6 +166,13 @@ exports.login = async (req, res) => {
 
 // Caterer Details
 exports.caterer_details = async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(422).json({
+      message: "Server side validation failed",
+      errors: errors.array(),
+    });
+  }
   await Caterer.findOne({ _id: req.body.userId })
     .then((result) => {
       if (result) {
@@ -192,7 +199,6 @@ exports.caterer_details = async (req, res) => {
 };
 
 // Fetch All Caterers
-
 exports.caterers = async (req, res) => {
   await Caterer.find()
     .select("-email -phone")

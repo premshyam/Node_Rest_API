@@ -1,4 +1,4 @@
-module.exports = app => {
+module.exports = (app) => {
   const customer_controller = require("../controllers/customer.controller");
   const Customer = require("../models/Customer");
   const { check, body } = require("express-validator");
@@ -22,15 +22,15 @@ module.exports = app => {
       ).matches(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9]).{8,}$/, "i"),
       body("email", "Enter valid email")
         .isEmail()
-        .custom(email => {
+        .custom((email) => {
           return Customer.isEmailRegistered(email);
         }),
       body("phone", "Enter a valid phone number")
         .isMobilePhone()
         .isLength({ min: 10, max: 10 })
-        .custom(phone => {
+        .custom((phone) => {
           return Customer.isPhoneRegistered(phone);
-        })
+        }),
     ],
     customer_controller.signup
   );
@@ -43,7 +43,7 @@ module.exports = app => {
         .if(body("phone").exists())
         .isMobilePhone()
         .isLength({ min: 10, max: 10 })
-        .custom(email => {
+        .custom((email) => {
           return Customer.isCustomerPhone(email);
         }),
       body(
@@ -52,9 +52,9 @@ module.exports = app => {
       ).matches(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9]).{8,}$/, "i"),
       body("email", "Enter valid registered email")
         .if(body("email").exists())
-        .custom(email => {
+        .custom((email) => {
           return Customer.isCustomerEmail(email);
-        })
+        }),
     ],
     customer_controller.login
   );
@@ -85,28 +85,27 @@ module.exports = app => {
     //validators for request body fields
     [
       body("first_name", "Invalid First name, enter 1 to 15 characters only")
+        .if(body("first_name").exists())
         .trim()
         .isLength({ min: 1, max: 15 }),
       body("last_name", "Invalid Last name, enter 1 to 15 characters only")
+        .if(body("last_name").exists())
         .trim()
         .isLength({ min: 1, max: 15 }),
       body(
         "password",
         "Password should be combination of one uppercase , one lower case, one special char, one digit and min 8 , max 15 char long"
-      ).matches(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9]).{8,}$/, "i"),
-      body("email", "Enter valid email")
-        .if(body("email").exists())
-        .isEmail()
-        .custom(email => {
-          return Customer.findByEmail(email);
-        }),
+      )
+        .if(body("password").exists())
+        .matches(
+          /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9]).{8,}$/,
+          "i"
+        ),
+      body("email", "Enter valid email").if(body("email").exists()).isEmail(),
       body("phone", "Enter a valid phone number")
         .if(body("phone").exists())
         .isMobilePhone()
-        .isLength({ min: 10, max: 10 })
-        .custom(phone => {
-          return Customer.findByPhone(phone);
-        })
+        .isLength({ min: 10, max: 10 }),
     ],
     customer_controller.update_customer
   );

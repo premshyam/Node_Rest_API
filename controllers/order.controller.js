@@ -16,7 +16,7 @@ exports.create_order = async (req, res) => {
     customer_id: req.body.userId,
     caterer_id: req.body.caterer_id,
     menu_id: req.body.menu_id,
-    cart: req.body.cart,
+    cart: req.body.cartItems,
     quantity: req.body.quantity,
     order_amount: req.body.order_amount,
     order_date: req.body.order_date,
