@@ -9,34 +9,35 @@ exports.create_order = async (req, res) => {
   if (!errors.isEmpty()) {
     return res.status(422).json({
       message: "Server side validation failed",
-      errors: errors.array()
+      errors: errors.array(),
     });
   }
   let order = new Order({
     customer_id: req.body.userId,
     caterer_id: req.body.caterer_id,
     menu_id: req.body.menu_id,
+    cart: req.body.cart,
     quantity: req.body.quantity,
     order_amount: req.body.order_amount,
     order_date: req.body.order_date,
-    delivery_date: req.body.delivery_date
+    delivery_date: req.body.delivery_date,
   });
 
   order
     .save()
-    .then(result => {
+    .then((result) => {
       return result;
     })
-    .then(result => {
+    .then((result) => {
       return Order.findById(result._id)
         .populate("customer_id")
         .populate("caterer_id")
         .populate("menu_id")
-        .then(result => {
+        .then((result) => {
           return result;
         });
     })
-    .then(result => {
+    .then((result) => {
       // console.log(result);
       data = {
         appId: config.appId,
@@ -46,28 +47,28 @@ exports.create_order = async (req, res) => {
         customerName:
           result.customer_id.first_name + result.customer_id.last_name,
         customerPhone: result.customer_id.phone,
-        customerEmail: result.customer_id.email
+        customerEmail: result.customer_id.email,
         // returnUrl: "http://localhost:/3000/checkout/result"
       };
       axios
         .post(config.orderApi, qs.stringify(data), {
           headers: {
-            "Content-Type": "application/x-www-form-urlencoded"
-          }
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
         })
-        .then(result => {
+        .then((result) => {
           console.log(result.data);
           res.json(result.data);
         })
-        .catch(err => {
+        .catch((err) => {
           console.log(err);
         });
     })
-    .catch(err => {
+    .catch((err) => {
       res.json({
         status: "error",
         message: "Something went wrong",
-        error: err
+        error: err,
       });
     });
 };
@@ -75,18 +76,18 @@ exports.create_order = async (req, res) => {
 // Fetch All Orders
 exports.orders = async (req, res) => {
   await Order.find()
-    .then(result => {
+    .then((result) => {
       res.json({
         status: "success",
         message: result.length + " Orders Found",
-        data: result
+        data: result,
       });
     })
-    .catch(err => {
+    .catch((err) => {
       res.json({
         status: "error",
         message: "Something went wrong",
-        error: err
+        error: err,
       });
     });
 };
@@ -94,26 +95,26 @@ exports.orders = async (req, res) => {
 // Order Details
 exports.order_details = async (req, res) => {
   await Order.findOne({ _id: req.params.id })
-    .then(result => {
+    .then((result) => {
       if (result) {
         res.json({
           status: "success",
           message: "Order Found",
-          data: result
+          data: result,
         });
       } else {
         res.json({
           status: "failed",
           message: "No Order Found",
-          data: result
+          data: result,
         });
       }
     })
-    .catch(err => {
+    .catch((err) => {
       res.json({
         status: "error",
         message: "Something went wrong",
-        error: err
+        error: err,
       });
     });
 };
@@ -124,22 +125,22 @@ exports.customer_orders = async (req, res) => {
   if (!errors.isEmpty()) {
     return res.status(422).json({
       message: "Server side validation failed",
-      errors: errors.array()
+      errors: errors.array(),
     });
   }
   await Order.find({ customer_id: req.body.userId })
-    .then(result => {
+    .then((result) => {
       res.json({
         status: "success",
         message: result.length + " Orders Found",
-        orders: result
+        orders: result,
       });
     })
-    .catch(err => {
+    .catch((err) => {
       res.json({
         status: "error",
         message: "Something went wrong",
-        error: err
+        error: err,
       });
     });
 };
@@ -150,22 +151,22 @@ exports.caterer_orders = async (req, res) => {
   if (!errors.isEmpty()) {
     return res.status(422).json({
       message: "Server side validation failed",
-      errors: errors.array()
+      errors: errors.array(),
     });
   }
   await Order.find({ caterer_id: req.body.userId })
-    .then(result => {
+    .then((result) => {
       res.json({
         status: "success",
         message: result.length + " Orders Found",
-        orders: result
+        orders: result,
       });
     })
-    .catch(err => {
+    .catch((err) => {
       res.json({
         status: "error",
         message: "Something went wrong",
-        error: err
+        error: err,
       });
     });
 };
@@ -180,18 +181,18 @@ exports.update_order = async (req, res) => {
         res.json({
           status: "error",
           message: "Something went wrong",
-          error: err
+          error: err,
         });
       } else {
         if (order) {
           res.json({
             status: "success",
-            message: "Order Updated Successfully"
+            message: "Order Updated Successfully",
           });
         } else {
           res.json({
             status: "failed",
-            message: "No Order Found"
+            message: "No Order Found",
           });
         }
       }
@@ -202,24 +203,24 @@ exports.update_order = async (req, res) => {
 // Delete Order
 exports.delete_order = async (req, res) => {
   await Order.findByIdAndDelete(req.params.id)
-    .then(result => {
+    .then((result) => {
       if (result) {
         res.json({
           status: "success",
-          message: "Order Deleted Successfully"
+          message: "Order Deleted Successfully",
         });
       } else {
         res.json({
           status: "failed",
-          message: "Order Not Found"
+          message: "Order Not Found",
         });
       }
     })
-    .catch(err => {
+    .catch((err) => {
       res.json({
         status: "error",
         message: "Something went wrong",
-        error: err
+        error: err,
       });
     });
 };

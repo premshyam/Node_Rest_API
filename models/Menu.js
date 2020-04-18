@@ -11,11 +11,29 @@ let menuSchema = new Schema({
   },
   menu_name: { type: String, required: true },
   price: { type: Number, required: true },
-  welcome_drinks: { type: Array, required: false, allowNull: true },
-  starters: { type: Array, required: false, allowNull: true },
-  main_course: { type: Array, required: false, allowNull: true },
-  desserts: { type: Array, required: false, allowNull: true },
-  chats: { type: Array, required: false, allowNull: true },
-  beverages: { type: Array, required: false, allowNull: true },
+  welcome_drinks: {
+    selectionLimit: { type: Number, required: false, allowNull: true },
+    items: { type: Array, required: false, allowNull: true },
+  },
+  starters: {
+    selectionLimit: { type: Number, required: false, allowNull: true },
+    items: { type: Array, required: false, allowNull: true },
+  },
+  main_course: {
+    selectionLimit: { type: Number, required: false, allowNull: true },
+    items: { type: Array, required: false, allowNull: true },
+  },
+  desserts: {
+    selectionLimit: { type: Number, required: false, allowNull: true },
+    items: { type: Array, required: false, allowNull: true },
+  },
+  chats: {
+    selectionLimit: { type: Number, required: false, allowNull: true },
+    items: { type: Array, required: false, allowNull: true },
+  },
+  beverages: {
+    selectionLimit: { type: Number, required: false, allowNull: true },
+    items: { type: Array, required: false, allowNull: true },
+  },
 });
 module.exports = mongoose.model("Menu", menuSchema);

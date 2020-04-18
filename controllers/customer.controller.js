@@ -42,7 +42,7 @@ exports.signup = async (req, res) => {
       // Create an empty cart for the customer
       const cart = new Cart({
         customer_id: customer.id,
-        cartItems: [],
+        cart: [],
       });
 
       return cart.save();

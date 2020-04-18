@@ -7,52 +7,51 @@ exports.add_item = (req, res) => {
   if (!errors.isEmpty()) {
     return res.status(422).json({
       message: "Server side validation failed",
-      errors: errors.array()
+      errors: errors.array(),
     });
   }
   const item = {
     menu_id: req.body.menu_id,
-    quantity: req.body.quantity
+    cartItems: req.body.cartItems,
+    quantity: req.body.quantity,
   };
   Cart.findOne({ customer_id: req.body.userId })
-    .then(cartObj => {
+    .then((cartObj) => {
       if (cartObj) {
         // console.log(cartObj.cartItems);
         // check if cartItems is empty
-        if (cartObj.cartItems.length) {
-          if (
-            cartObj.cartItems.some(element => element.menu_id == item.menu_id)
-          ) {
-            let index = cartObj.cartItems.findIndex(
-              i => i.menu_id == item.menu_id
+        if (cartObj.cart.length) {
+          if (cartObj.cart.some((element) => element.menu_id == item.menu_id)) {
+            let index = cartObj.cart.findIndex(
+              (i) => i.menu_id == item.menu_id
             );
-            cartObj.cartItems[index].quantity = item.quantity;
+            cartObj.cart[index].quantity = item.quantity;
           } else {
-            cartObj.cartItems.push(item);
+            cartObj.cart.push(item);
           }
         } else {
-          cartObj.cartItems.push(item);
+          cartObj.cart.push(item);
         }
         return cartObj.save();
       } else {
         res.json({
           status: "failed",
-          message: "Cart Not Found"
+          message: "Cart Not Found",
         });
       }
     })
-    .then(cart => {
+    .then((cart) => {
       res.json({
         status: "success",
         message: "Menu Added to Cart",
-        data: cart
+        data: cart,
       });
     })
-    .catch(err => {
+    .catch((err) => {
       res.json({
         status: "error",
         message: "Something went wrong",
-        error: err
+        error: err,
       });
     });
 };
@@ -62,44 +61,40 @@ exports.remove_item = (req, res) => {
   if (!errors.isEmpty()) {
     return res.status(422).json({
       message: "Server side validation failed",
-      errors: errors.array()
+      errors: errors.array(),
     });
   }
   const item = {
-    menu_id: req.body.menu_id
+    menu_id: req.body.menu_id,
   };
   Cart.findOne({ customer_id: req.body.userId })
-    .then(cartObj => {
+    .then((cartObj) => {
       if (cartObj) {
         // console.log(cartObj.cartItems);
-        if (
-          cartObj.cartItems.some(element => element.menu_id == item.menu_id)
-        ) {
-          let index = cartObj.cartItems.findIndex(
-            i => i.menu_id == item.menu_id
-          );
-          cartObj.cartItems.splice(index, 1);
+        if (cartObj.cart.some((element) => element.menu_id == item.menu_id)) {
+          let index = cartObj.cart.findIndex((i) => i.menu_id == item.menu_id);
+          cartObj.cart.splice(index, 1);
         }
         return cartObj.save();
       } else {
         res.json({
           status: "failed",
-          message: "Cart Not Found"
+          message: "Cart Not Found",
         });
       }
     })
-    .then(cart => {
+    .then((cart) => {
       res.json({
         status: "success",
         message: "Menu removed from Cart",
-        data: cart
+        data: cart,
       });
     })
-    .catch(err => {
+    .catch((err) => {
       res.json({
         status: "error",
         message: "Something went wrong",
-        error: err
+        error: err,
       });
     });
 };
@@ -134,25 +129,25 @@ exports.remove_item = (req, res) => {
 // Customer Cart Items
 exports.cart_items = async (req, res) => {
   await Cart.findOne({ customer_id: req.body.userId })
-    .then(result => {
+    .then((result) => {
       if (result) {
         res.json({
           status: "success",
-          message: result.cartItems.length + " Items Found",
-          cart: result
+          message: "Cart Items Found",
+          cart: result,
         });
       } else {
         res.json({
           status: "failed",
-          message: "Cart Not Found"
+          message: "Cart Not Found",
         });
       }
     })
-    .catch(err => {
+    .catch((err) => {
       res.json({
         status: "error",
         message: "Something went wrong",
-        error: err
+        error: err,
       });
     });
 };
@@ -189,28 +184,28 @@ exports.cart_items = async (req, res) => {
 // Delete Cart Item
 exports.empty_cart = async (req, res) => {
   await Cart.findOne({ customer_id: req.body.userId })
-    .then(cartObj => {
+    .then((cartObj) => {
       if (cartObj) {
         cartObj.cartItems = [];
         return cartObj.save();
       } else {
         res.json({
           status: "failed",
-          message: "Cart Not Found"
+          message: "Cart Not Found",
         });
       }
     })
-    .then(cartObj => {
+    .then((cartObj) => {
       res.json({
         status: "success",
-        message: "Cart empty"
+        message: "Cart empty",
       });
     })
-    .catch(err => {
+    .catch((err) => {
       res.json({
         status: "error",
         message: "Something went wrong",
-        error: err
+        error: err,
       });
     });
 };
