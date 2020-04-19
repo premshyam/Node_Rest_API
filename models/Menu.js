@@ -10,6 +10,8 @@ let menuSchema = new Schema({
     required: true,
   },
   menu_name: { type: String, required: true },
+  menu_description: { type: String, required: true },
+  image: { type: String, required: true },
   price: { type: Number, required: true },
   welcome_drinks: [
     {
