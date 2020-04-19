@@ -11,29 +11,47 @@ let menuSchema = new Schema({
   },
   menu_name: { type: String, required: true },
   price: { type: Number, required: true },
-  welcome_drinks: {
-    selectionLimit: { type: Number, required: false, allowNull: true },
-    items: { type: Array, required: false, allowNull: true },
-  },
-  starters: {
-    selectionLimit: { type: Number, required: false, allowNull: true },
-    items: { type: Array, required: false, allowNull: true },
-  },
-  main_course: {
-    selectionLimit: { type: Number, required: false, allowNull: true },
-    items: { type: Array, required: false, allowNull: true },
-  },
-  desserts: {
-    selectionLimit: { type: Number, required: false, allowNull: true },
-    items: { type: Array, required: false, allowNull: true },
-  },
-  chats: {
-    selectionLimit: { type: Number, required: false, allowNull: true },
-    items: { type: Array, required: false, allowNull: true },
-  },
-  beverages: {
-    selectionLimit: { type: Number, required: false, allowNull: true },
-    items: { type: Array, required: false, allowNull: true },
-  },
+  welcome_drinks: [
+    {
+      dishes: { type: String, required: true },
+      selectionLimit: { type: Number, required: false, allowNull: true },
+      items: { type: Array, required: false, allowNull: true },
+    },
+  ],
+  starters: [
+    {
+      dishes: { type: String, required: true },
+      selectionLimit: { type: Number, required: false, allowNull: true },
+      items: { type: Array, required: false, allowNull: true },
+    },
+  ],
+  main_course: [
+    {
+      dishes: { type: String, required: true },
+      selectionLimit: { type: Number, required: false, allowNull: true },
+      items: { type: Array, required: false, allowNull: true },
+    },
+  ],
+  desserts: [
+    {
+      dishes: { type: String, required: true },
+      selectionLimit: { type: Number, required: false, allowNull: true },
+      items: { type: Array, required: false, allowNull: true },
+    },
+  ],
+  chats: [
+    {
+      dishes: { type: String, required: true },
+      selectionLimit: { type: Number, required: false, allowNull: true },
+      items: { type: Array, required: false, allowNull: true },
+    },
+  ],
+  beverages: [
+    {
+      dishes: { type: String, required: true },
+      selectionLimit: { type: Number, required: false, allowNull: true },
+      items: { type: Array, required: false, allowNull: true },
+    },
+  ],
 });
 module.exports = mongoose.model("Menu", menuSchema);
