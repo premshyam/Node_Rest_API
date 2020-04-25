@@ -59,7 +59,7 @@ exports.signup = async (req, res) => {
     .then((tokenObj) => {
       const authToken = jwt.sign(
         { email: customer.email, userId: customer.id },
-        "secret",
+        process.env.JWT_PRIVATE_KEY,
         { expiresIn: "1h" }
       );
       res.json({
@@ -131,7 +131,7 @@ exports.login = async (req, res) => {
         // generate auth token
         const token = jwt.sign(
           { email: req.body.email, userId: id },
-          "secret",
+          process.env.JWT_PRIVATE_KEY,
           {
             expiresIn: "1h",
           }

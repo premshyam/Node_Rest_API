@@ -19,7 +19,7 @@ module.exports = (req, res, next) => {
   // try to decode token
   try {
     //verify and decode the token
-    decodedToken = jwt.verify(token, "secret");
+    decodedToken = jwt.verify(token, process.env.JWT_PRIVATE_KEY);
   } catch (err) {
     //catch errors
     //throw error

@@ -2,7 +2,7 @@ const Order = require("../models/Order");
 const { validationResult } = require("express-validator");
 const axios = require("axios");
 const qs = require("querystring");
-const config = require("../config/config.json");
+
 // Create New Order
 exports.create_order = async (req, res) => {
   const errors = validationResult(req);
@@ -40,8 +40,8 @@ exports.create_order = async (req, res) => {
     .then((result) => {
       // console.log(result);
       data = {
-        appId: config.appId,
-        secretKey: config.secretKey,
+        appId: process.env.CASHFREE_APP_ID,
+        secretKey: process.env.CASHFREE_SECRET_KEY,
         orderId: result._id.toString(),
         orderAmount: result.order_amount,
         customerName:
@@ -51,7 +51,7 @@ exports.create_order = async (req, res) => {
         // returnUrl: "http://localhost:/3000/checkout/result"
       };
       axios
-        .post(config.orderApi, qs.stringify(data), {
+        .post(process.env.CASHFREE_ORDER_API, qs.stringify(data), {
           headers: {
             "Content-Type": "application/x-www-form-urlencoded",
           },

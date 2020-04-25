@@ -1,14 +1,19 @@
+// load env variables
+const env = require("dotenv").config();
 //minimalist web framework for node
 const express = require("express");
 //request body parsing middleware.
 const bodyParser = require("body-parser");
-//creat the app
+//package for cloudinary integration
+const cloudinary = require("cloudinary");
+//ODM for mongoDB (a NoSQL DB)
+const mongoose = require("mongoose");
+//create the app
 const app = express();
 //built-in module To handle file paths
 // var path = require("path");
 //built-in module To handle the file system
 // var fs = require("fs");
-const cloudinary = require("cloudinary");
 //global object called __basedir scop is anywhere in the project
 global.__basedir = __dirname;
 // middleware that only parses json
@@ -37,27 +42,22 @@ require("./routes/order.route")(app);
 app.get("/", (req, res) => {
   res.send("Welcome");
 });
-//ODM for mongoDB (a NoSQL DB)
-const mongoose = require("mongoose");
 // Your Mongo Atlas Cluster
 // Create a Project on Mongo Atlas and Create a Cluster and than configure it
-let dev_db_url =
-  // "mongodb+srv://<username>:<password>@cluster0-zevrx.mongodb.net/test?retryWrites=true&w=majority";
-  "mongodb://35.200.243.49:27017/catersmart";
 
-const mongoDB = process.env.MONGODB_URI || dev_db_url;
+const mongoDB = process.env.MONGODB_URI;
 mongoose
   .connect(mongoDB, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => {
     console.log("MongoDB connected…");
-    app.listen(process.env.PORT || 4000);
+    app.listen(process.env.PORT);
   })
-  .catch(err => console.log(err));
+  .catch((err) => console.log(err));
 
 // Please create your account on cloudinary and find following keys from Dashboard.
 // Make Sure you verified your account via Email after creating to work it properly.
 cloudinary.config({
-  cloud_name: "premshamsundar",
-  api_key: "425991328347625",
-  api_secret: "4Z4-DI9OAScG2SP8dZzBDtzCAbQ"
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
 });

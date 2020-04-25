@@ -136,7 +136,7 @@ exports.login = async (req, res) => {
       if (result) {
         const token = jwt.sign(
           { email: result.email, userId: result._id },
-          "secret",
+          process.env.JWT_PRIVATE_KEY,
           { expiresIn: "1h" }
         );
         // If Caterer Exists
