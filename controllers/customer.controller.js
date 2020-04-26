@@ -1,6 +1,6 @@
 const bcrypt = require("bcryptjs");
 const Customer = require("../models/Customer");
-const Token = require("../models/Token");
+const Otp = require("../models/Otp");
 const Cart = require("../models/Cart");
 //jsonwebtokens module for generating auth tokens
 const jwt = require("jsonwebtoken");
@@ -8,8 +8,6 @@ const jwt = require("jsonwebtoken");
 const { validationResult } = require("express-validator");
 //email transporter
 const { transporter } = require("../util/emailer");
-//random token generator
-const crypto = require("crypto");
 // Customer Signup
 exports.signup = async (req, res) => {
   const errors = validationResult(req);
@@ -19,12 +17,8 @@ exports.signup = async (req, res) => {
       errors: errors.array(),
     });
   }
-  let password = "";
   // hash the user password
-  await bcrypt.hash(req.body.password, 12).then((hashedPassword) => {
-    // console.log(hashedPassword);
-    password = hashedPassword;
-  });
+  let password = await bcrypt.hash(req.body.password, 12);
   //create customer object
   const customer = new Customer({
     first_name: req.body.first_name,
@@ -48,15 +42,15 @@ exports.signup = async (req, res) => {
       return cart.save();
     })
     .then((cartObj) => {
-      // Create a verification token for this Customer
-      const token = new Token({
+      // generate OTP for this Customer
+      const otp = new Otp({
         _userId: customer.id,
-        token: crypto.randomBytes(16).toString("hex"),
+        otp: Math.floor(100000 + Math.random() * 900000),
       });
 
-      return token.save();
+      return otp.save();
     })
-    .then((tokenObj) => {
+    .then((otpObj) => {
       const authToken = jwt.sign(
         { email: customer.email, userId: customer.id },
         process.env.JWT_PRIVATE_KEY,
@@ -65,16 +59,16 @@ exports.signup = async (req, res) => {
       res.json({
         status: "success",
         message:
-          "Customer Registered Successfully, A verification email has will be sent",
+          "Customer Registered Successfully, A verification email has been sent",
         token: authToken,
-        id: tokenObj._userId,
+        id: otpObj._userId,
       });
       return transporter.sendMail({
         to: req.body.email,
         from: "info@catersmart.in",
         subject: "Welcome " + req.body.first_name,
         html: `
-        <p>Click this <a href="http://${req.headers.host}/api/email_confirmation/${tokenObj.token}">link</a> to verify your email.</p>
+        <p>${otpObj.otp} is the OTP to verify your email at catersmart.</p>
        `,
       });
     })
@@ -222,10 +216,7 @@ exports.update_customer = async (req, res) => {
   //check is password field was updated
   if (req.body.password) {
     //then hash the new password
-    await bcrypt.hash(req.body.password, 12).then((hashedPassword) => {
-      // console.log(hashedPassword);
-      req.body.password = hashedPassword;
-    });
+    req.body.password = await bcrypt.hash(req.body.password, 12);
   }
   await Customer.findByIdAndUpdate(
     req.body.userId,
@@ -245,15 +236,15 @@ exports.update_customer = async (req, res) => {
               message: "Customer Updated Successfully",
             });
           } else {
-            // Create a verification token for this Customer
-            const token = new Token({
+            // generate OTP for this Customer
+            const otp = new Otp({
               _userId: customer.id,
-              token: crypto.randomBytes(16).toString("hex"),
+              otp: Math.floor(100000 + Math.random() * 900000),
             });
 
-            token
+            otp
               .save()
-              .then((tokenObj) => {
+              .then((otpObj) => {
                 res.json({
                   status: "success",
                   message:
@@ -265,7 +256,7 @@ exports.update_customer = async (req, res) => {
                   from: "info@catersmart.in",
                   subject: "Welcome " + req.body.first_name,
                   html: `
-                <p>Click this <a href="http://${req.headers.host}/api/email_confirmation/${tokenObj.token}">link</a> to verify your email.</p>
+                <p>${otpObj.otp} is the OTP to verify your email at catersmart.</p>
                `,
                 });
               })
@@ -320,7 +311,7 @@ exports.delete_customer = async (req, res) => {
     });
 };
 
-exports.customer_confirm_email = async (req, res) => {
+exports.otp_verification = async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(422).json({
@@ -328,16 +319,16 @@ exports.customer_confirm_email = async (req, res) => {
       errors: errors.array(),
     });
   }
-  await Token.findOne({ token: req.params.token })
-    .then((tokenObj) => {
-      if (!tokenObj) {
+  await Otp.findOne({ otp: req.body.otp })
+    .then((otpObj) => {
+      if (!otpObj) {
         res.json({
           status: "failed",
-          message: "Token expired or unable to find it.",
+          message: "OTP expired or Invalid.",
         });
         return;
       }
-      return Customer.findOne({ _id: tokenObj._userId });
+      return Customer.findOne({ _id: otpObj._userId });
     })
     .then((customer) => {
       if (!customer) {
@@ -364,6 +355,47 @@ exports.customer_confirm_email = async (req, res) => {
       });
     })
     .catch((err) => {
+      res.json({
+        status: "error",
+        message: "Something went wrong",
+        error: err,
+      });
+    });
+};
+
+exports.resend_otp = async (req, res) => {
+  console.log(req.body, req.email);
+  await Otp.findOne({ _userId: req.body.userId })
+    .then((otpObj) => {
+      if (otpObj) {
+        return otpObj;
+      }
+      const otp = new Otp({
+        _userId: req.body.userId,
+        otp: Math.floor(100000 + Math.random() * 900000),
+      });
+      return otp.save();
+    })
+    .then((otpObj) => {
+      // console.log(otpObj);
+      return transporter.sendMail({
+        to: req.email,
+        from: "info@catersmart.in",
+        subject: otpObj.otp + "is the OTP",
+        html: `
+      <p>${otpObj.otp} is the OTP to verify your email at catersmart.</p>
+     `,
+      });
+    })
+    .then((result) => {
+      console.log(result);
+      res.json({
+        status: "success",
+        message: "Resent OTP",
+      });
+    })
+    .catch((err) => {
+      // console.log(err);
       res.json({
         status: "error",
         message: "Something went wrong",

@@ -67,12 +67,16 @@ module.exports = (app) => {
     customer_controller.customer_details
   );
 
-  // Customer email verification
-  app.get(
-    "/api/email_confirmation/:token",
-    [check("token").isAlphanumeric()],
-    customer_controller.customer_confirm_email
+  // Customer OTP verification
+  app.post(
+    "/api/customer_otp_verification/",
+    isAuth,
+    [body("otp", "Invalid OTP").isNumeric().isLength({ min: 6, max: 6 })],
+    customer_controller.otp_verification
   );
+
+  // resend Customer OTP
+  app.get("/api/resend_customer_otp/", isAuth, customer_controller.resend_otp);
 
   // All Customers
   app.get("/api/customers", customer_controller.customers);

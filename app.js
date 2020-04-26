@@ -8,6 +8,8 @@ const bodyParser = require("body-parser");
 const cloudinary = require("cloudinary");
 //ODM for mongoDB (a NoSQL DB)
 const mongoose = require("mongoose");
+//
+const errorHandler = require("./util/error.handler");
 //create the app
 const app = express();
 //built-in module To handle file paths
@@ -37,11 +39,14 @@ app.use(bodyParser.urlencoded({ limit: "10mb", extended: true }));
 require("./routes/customer.route")(app);
 require("./routes/caterer.route")(app);
 require("./routes/menu.route")(app);
+require("./routes/item.route")(app);
 require("./routes/cart.route")(app);
 require("./routes/order.route")(app);
 app.get("/", (req, res) => {
   res.send("Welcome");
 });
+// global error handler
+app.use(errorHandler);
 // Your Mongo Atlas Cluster
 // Create a Project on Mongo Atlas and Create a Cluster and than configure it
 

@@ -20,8 +20,6 @@ const customerSchema = new Schema({
   phone: { type: String, required: true },
   verified: { type: Boolean, required: true, default: false },
   // cart: [cartSchema],
-  resetToken: { type: String },
-  resetTokenExpiration: { type: Date },
 });
 
 customerSchema.statics.isEmailRegistered = function (email) {
