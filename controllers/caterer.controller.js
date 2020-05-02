@@ -1,3 +1,4 @@
+const HttpStatus = require("http-status-codes");
 //import Caterer model
 const Caterer = require("../models/Caterer");
 //jsonwebtokens module for generating auth tokens
@@ -35,7 +36,7 @@ const uploadImage = async (image) => {
 exports.signup = async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return res.status(422).json({
+    return res.status(HttpStatus.UNPROCESSABLE_ENTITY).json({
       message: "Server side validation failed",
       errors: errors.array(),
     });
@@ -63,9 +64,9 @@ exports.signup = async (req, res) => {
   await Caterer.find({ email: req.body.email })
     .then((count) => {
       if (count.length > 0) {
-        res.json({
-          status: "failed",
+        res.status(HttpStatus.BAD_REQUEST).json({
           message: "Email Already Exists",
+          errors: [],
         });
       } else {
         const caterer = new Caterer({
@@ -85,29 +86,24 @@ exports.signup = async (req, res) => {
 
         // Register Caterer
 
-        caterer
-          .save()
-          .then((result) => {
-            res.json({
-              status: "success",
-              message: "Caterer Registered Successfully",
-              data: result,
-            });
-          })
-          .catch((err) => {
-            res.json({
-              status: "error",
-              message: "Something went wrong",
-              error: err,
-            });
-          });
+        return caterer.save();
       }
     })
-    .catch((err) => {
+    .then((caterer) => {
+      const token = jwt.sign(
+        { email: caterer.email, userId: caterer._id },
+        process.env.JWT_PRIVATE_KEY,
+        { expiresIn: "1h" }
+      );
       res.json({
-        status: "error",
+        message: "Caterer Registered Successfully",
+        token: token,
+      });
+    })
+    .catch((err) => {
+      res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
         message: "Something went wrong",
-        error: err,
+        errors: err,
       });
     });
 };
@@ -116,7 +112,7 @@ exports.signup = async (req, res) => {
 exports.login = async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return res.status(422).json({
+    return res.status(HttpStatus.UNPROCESSABLE_ENTITY).json({
       message: "Server side validation failed",
       errors: errors.array(),
     });
@@ -141,25 +137,21 @@ exports.login = async (req, res) => {
         );
         // If Caterer Exists
         res.json({
-          status: "success",
           message: "Login Successfull",
           token: token,
-          userId: result._id.toString(),
         });
       } else {
         // If Caterer doesn't Exists
-        res.json({
-          status: "failed",
-          message: "Invalid Email or Password",
-          data: result,
+        res.status(HttpStatus.BAD_REQUEST).json({
+          message: "Caterer Email or Password not registered",
+          errors: [],
         });
       }
     })
     .catch((err) => {
-      res.json({
-        status: "error",
+      res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
         message: "Something went wrong",
-        error: err,
+        errors: err,
       });
     });
 };
@@ -168,7 +160,7 @@ exports.login = async (req, res) => {
 exports.caterer_details = async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return res.status(422).json({
+    return res.status(HttpStatus.UNPROCESSABLE_ENTITY).json({
       message: "Server side validation failed",
       errors: errors.array(),
     });
@@ -177,23 +169,20 @@ exports.caterer_details = async (req, res) => {
     .then((result) => {
       if (result) {
         res.json({
-          status: "success",
           message: "Caterer Found",
-          data: result,
+          caterer: result,
         });
       } else {
-        res.json({
-          status: "failed",
+        res.status(HttpStatus.BAD_REQUEST).json({
           message: "Caterer Not Found",
-          data: result,
+          errors: [],
         });
       }
     })
     .catch((err) => {
-      res.json({
-        status: "error",
+      res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
         message: "Something went wrong",
-        error: err,
+        errors: err,
       });
     });
 };
@@ -204,16 +193,14 @@ exports.caterers = async (req, res) => {
     .select("-email -phone")
     .then((result) => {
       res.json({
-        status: "success",
         message: result.length + " Caterers Found",
-        data: result,
+        caterer: result,
       });
     })
     .catch((err) => {
-      res.json({
-        status: "error",
+      res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
         message: "Something went wrong",
-        error: err,
+        errors: err,
       });
     });
 };
@@ -223,7 +210,7 @@ exports.caterers = async (req, res) => {
 exports.update_caterer = async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return res.status(422).json({
+    return res.status(HttpStatus.UNPROCESSABLE_ENTITY).json({
       message: "Server side validation failed",
       errors: errors.array(),
     });
@@ -233,23 +220,15 @@ exports.update_caterer = async (req, res) => {
     { $set: req.body },
     (err, caterer) => {
       if (err) {
-        res.json({
-          status: "error",
+        res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
           message: "Something went wrong",
-          error: err,
+          errors: err,
         });
       } else {
-        if (caterer) {
-          res.json({
-            status: "success",
-            message: "Caterer Updated Successfully",
-          });
-        } else {
-          res.json({
-            status: "failed",
-            message: "Caterer Not Found",
-          });
-        }
+        res.json({
+          message: "Caterer Updated Successfully",
+          caterer: caterer,
+        });
       }
     }
   );
@@ -262,21 +241,18 @@ exports.delete_caterer = async (req, res) => {
     .then((result) => {
       if (result) {
         res.json({
-          status: "success",
           message: "Caterer Deleted Successfully",
         });
       } else {
-        res.json({
-          status: "failed",
+        res.status(HttpStatus.BAD_REQUEST).json({
           message: "Caterer Not Found",
         });
       }
     })
     .catch((err) => {
-      res.json({
-        status: "error",
+      res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
         message: "Something went wrong",
-        error: err,
+        errors: err,
       });
     });
 };

@@ -1,4 +1,5 @@
 const bcrypt = require("bcryptjs");
+const HttpStatus = require("http-status-codes");
 const Customer = require("../models/Customer");
 const Otp = require("../models/Otp");
 const Cart = require("../models/Cart");
@@ -12,7 +13,7 @@ const { transporter } = require("../util/emailer");
 exports.signup = async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return res.status(422).json({
+    return res.status(HttpStatus.UNPROCESSABLE_ENTITY).json({
       message: "Server side validation failed",
       errors: errors.array(),
     });
@@ -57,11 +58,9 @@ exports.signup = async (req, res) => {
         { expiresIn: "1h" }
       );
       res.json({
-        status: "success",
         message:
           "Customer Registered Successfully, A verification email has been sent",
         token: authToken,
-        id: otpObj._userId,
       });
       return transporter.sendMail({
         to: req.body.email,
@@ -76,10 +75,9 @@ exports.signup = async (req, res) => {
       console.log(result);
     })
     .catch((err) => {
-      res.json({
-        status: "error",
+      res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
         message: "Something went wrong",
-        error: err,
+        errors: err,
       });
     });
 };
@@ -88,7 +86,7 @@ exports.signup = async (req, res) => {
 exports.login = async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return res.status(422).json({
+    return res.status(HttpStatus.UNPROCESSABLE_ENTITY).json({
       message: "Server side validation failed",
       errors: errors.array(),
     });
@@ -109,9 +107,9 @@ exports.login = async (req, res) => {
     .then((customer) => {
       if (!customer) {
         // If Customer doesn't Exists
-        res.status(422).json({
-          status: "failed",
-          message: "Invalid Email, Phone or password",
+        res.status(HttpStatus.UNPROCESSABLE_ENTITY).json({
+          message: "Customer Email or Phone not registered",
+          errors: [],
         });
       }
       // console.log(customer);
@@ -132,23 +130,20 @@ exports.login = async (req, res) => {
         );
         // If Customer Exists
         res.json({
-          status: "success",
           message: "Login Successfull",
           token: token,
-          userId: id.toString(),
         });
       } else {
-        res.status(422).json({
-          status: "failed",
+        res.status(HttpStatus.UNPROCESSABLE_ENTITY).json({
           message: "Invalid Email, Phone or password",
+          errors: [],
         });
       }
     })
     .catch((err) => {
-      res.status(500).json({
-        status: "error",
+      res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
         message: "Something went wrong",
-        error: err,
+        errors: err,
       });
     });
 };
@@ -157,25 +152,15 @@ exports.login = async (req, res) => {
 exports.customer_details = async (req, res) => {
   await Customer.findById(req.body.userId)
     .then((customer) => {
-      if (customer) {
-        res.json({
-          status: "success",
-          message: "Customer Found",
-          data: customer,
-        });
-      } else {
-        res.json({
-          status: "failed",
-          message: "Customer Not Found",
-          data: result,
-        });
-      }
+      res.json({
+        message: "Customer Found",
+        customer: customer,
+      });
     })
     .catch((err) => {
-      res.json({
-        status: "error",
+      res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
         message: "Something went wrong",
-        error: err,
+        errors: err,
       });
     });
 };
@@ -183,18 +168,16 @@ exports.customer_details = async (req, res) => {
 // Fetch All Customers
 exports.customers = async (req, res) => {
   await Customer.find()
-    .then((result) => {
+    .then((customers) => {
       res.json({
-        status: "success",
-        message: result.length + " Customers Found",
-        data: result,
+        message: customers.length + " Customers Found",
+        customer: customers,
       });
     })
     .catch((err) => {
-      res.json({
-        status: "error",
+      res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
         message: "Something went wrong",
-        error: err,
+        errors: err,
       });
     });
 };
@@ -203,7 +186,7 @@ exports.customers = async (req, res) => {
 exports.update_customer = async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return res.status(422).json({
+    return res.status(HttpStatus.UNPROCESSABLE_ENTITY).json({
       message: "Server side validation failed",
       errors: errors.array(),
     });
@@ -223,17 +206,16 @@ exports.update_customer = async (req, res) => {
     { $set: req.body },
     (err, customer) => {
       if (err) {
-        res.json({
-          status: "error",
+        res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
           message: "Something went wrong",
-          error: err,
+          errors: err,
         });
       } else {
         if (customer) {
           if (customer.verified) {
             res.json({
-              status: "success",
               message: "Customer Updated Successfully",
+              customer: customer,
             });
           } else {
             // generate OTP for this Customer
@@ -246,10 +228,9 @@ exports.update_customer = async (req, res) => {
               .save()
               .then((otpObj) => {
                 res.json({
-                  status: "success",
                   message:
                     "Customer Updated Successfully, A verification email has will be sent",
-                  // id: tokenObj._userId,
+                  customer: customer,
                 });
                 return transporter.sendMail({
                   to: req.body.email,
@@ -264,17 +245,16 @@ exports.update_customer = async (req, res) => {
                 console.log(result);
               })
               .catch((err) => {
-                res.json({
-                  status: "error",
+                res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
                   message: "Something went wrong",
-                  error: err,
+                  errors: err,
                 });
               });
           }
         } else {
           res.json({
-            status: "failed",
             message: "Customer Not Found",
+            customer: customer,
           });
         }
       }
@@ -290,23 +270,20 @@ exports.delete_customer = async (req, res) => {
         Cart.findOneAndRemove({ customer_id: req.body.userId }).then(
           (result) => {
             res.json({
-              status: "success",
               message: "Customer Deleted Successfully",
             });
           }
         );
       } else {
         res.json({
-          status: "failed",
           message: "Customer Not Found",
         });
       }
     })
     .catch((err) => {
-      res.json({
-        status: "error",
+      res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
         message: "Something went wrong",
-        error: err,
+        errors: err,
       });
     });
 };
@@ -314,7 +291,7 @@ exports.delete_customer = async (req, res) => {
 exports.otp_verification = async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return res.status(422).json({
+    return res.status(HttpStatus.UNPROCESSABLE_ENTITY).json({
       message: "Server side validation failed",
       errors: errors.array(),
     });
@@ -322,9 +299,9 @@ exports.otp_verification = async (req, res) => {
   await Otp.findOne({ otp: req.body.otp })
     .then((otpObj) => {
       if (!otpObj) {
-        res.json({
-          status: "failed",
+        res.status(HttpStatus.BAD_REQUEST).json({
           message: "OTP expired or Invalid.",
+          errors: [],
         });
         return;
       }
@@ -332,39 +309,37 @@ exports.otp_verification = async (req, res) => {
     })
     .then((customer) => {
       if (!customer) {
-        res.json({
-          status: "failed",
+        res.status(HttpStatus.BAD_REQUEST).json({
           message: "Customer Not Found",
+          errors: [],
         });
         return;
       }
       if (customer.verified) {
         res.json({
-          status: 400,
           message: "Customer already been verified",
+          customer: customer,
         });
-        return;
       }
       customer.verified = true;
       return customer.save();
     })
-    .then(() => {
+    .then((customer) => {
       res.json({
-        status: "success",
         message: "Customer successfully verified",
+        customer: customer,
       });
     })
     .catch((err) => {
-      res.json({
-        status: "error",
+      res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
         message: "Something went wrong",
-        error: err,
+        errors: err,
       });
     });
 };
 
 exports.resend_otp = async (req, res) => {
-  console.log(req.body, req.email);
+  //console.log(req.body, req.email);
   await Otp.findOne({ _userId: req.body.userId })
     .then((otpObj) => {
       if (otpObj) {
@@ -390,16 +365,14 @@ exports.resend_otp = async (req, res) => {
     .then((result) => {
       console.log(result);
       res.json({
-        status: "success",
         message: "Resent OTP",
       });
     })
     .catch((err) => {
       // console.log(err);
-      res.json({
-        status: "error",
+      res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
         message: "Something went wrong",
-        error: err,
+        errors: err,
       });
     });
 };

@@ -1,3 +1,4 @@
+const HttpStatus = require("http-status-codes");
 const Menu = require("../models/Menu");
 //module to catch request validation Result
 const { validationResult } = require("express-validator");
@@ -6,7 +7,7 @@ const { validationResult } = require("express-validator");
 exports.create_menu = async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return res.status(422).json({
+    return res.status(HttpStatus.UNPROCESSABLE_ENTITY).json({
       message: "Server side validation failed",
       errors: errors.array(),
     });
@@ -25,18 +26,16 @@ exports.create_menu = async (req, res) => {
 
   await menu
     .save()
-    .then((result) => {
+    .then((menu) => {
       res.json({
-        status: "success",
         message: "Menu Create Successfully",
-        data: result,
+        menu: menu,
       });
     })
     .catch((err) => {
-      res.json({
-        status: "error",
+      res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
         message: "Something went wrong",
-        error: err,
+        errors: err,
       });
     });
 };
@@ -46,16 +45,14 @@ exports.caterer_menus = async (req, res) => {
   await Menu.find({ caterer_id: req.params.id })
     .then((result) => {
       res.json({
-        status: "success",
         message: result.length + " Menus Found",
-        data: result,
+        menu: result,
       });
     })
     .catch((err) => {
-      res.json({
-        status: "error",
+      res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
         message: "Something went wrong",
-        error: err,
+        errors: err,
       });
     });
 };
@@ -64,7 +61,7 @@ exports.caterer_menus = async (req, res) => {
 exports.update_menu = async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return res.status(422).json({
+    return res.status(HttpStatus.BAD_REQUEST).json({
       message: "Server side validation failed",
       errors: errors.array(),
     });
@@ -74,23 +71,15 @@ exports.update_menu = async (req, res) => {
     { $set: req.body },
     (err, menu) => {
       if (err) {
-        res.json({
-          status: "error",
+        res.status(HttpStatus.UNPROCESSABLE_ENTITY).json({
           message: "Something went wrong",
-          error: err,
+          errors: err,
         });
       } else {
-        if (menu) {
-          res.json({
-            status: "success",
-            message: "Menu Updated Successfully",
-          });
-        } else {
-          res.json({
-            status: "failed",
-            message: "Menu Not Found",
-          });
-        }
+        res.json({
+          message: "Menu Updated Successfully",
+          menu: menu,
+        });
       }
     }
   );
@@ -102,23 +91,20 @@ exports.menu = async (req, res) => {
     .then((result) => {
       if (result) {
         res.json({
-          status: "success",
           message: "Menu Found",
-          data: result,
+          menu: result,
         });
       } else {
-        res.json({
-          status: "failed",
+        res.status(HttpStatus.UNPROCESSABLE_ENTITY).json({
           message: "No Menu Found",
-          data: result,
+          errors: [],
         });
       }
     })
     .catch((err) => {
-      res.json({
-        status: "error",
+      res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
         message: "Something went wrong",
-        error: err,
+        errors: err,
       });
     });
 };
@@ -127,7 +113,7 @@ exports.menu = async (req, res) => {
 exports.delete_menu = async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return res.status(422).json({
+    return res.status(HttpStatus.BAD_REQUEST).json({
       message: "Server side validation failed",
       errors: errors.array(),
     });
@@ -136,21 +122,18 @@ exports.delete_menu = async (req, res) => {
     .then((result) => {
       if (result) {
         res.json({
-          status: "success",
           message: "Menu Deleted Successfully",
         });
       } else {
-        res.json({
-          status: "failed",
+        res.status(HttpStatus.UNPROCESSABLE_ENTITY).json({
           message: "Menu Not Found",
         });
       }
     })
     .catch((err) => {
-      res.json({
-        status: "error",
+      res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
         message: "Something went wrong",
-        error: err,
+        errors: err,
       });
     });
 };

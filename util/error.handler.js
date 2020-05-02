@@ -1,10 +1,9 @@
 // global error handler middleware
 const errorHandler = (error, req, res, next) => {
   console.log(error);
-  const status = error.statusCode || 500;
-  const message = error.message;
-  const data = error.data;
-  res.status(status).json({ message: message, data: data });
+  res
+    .status(error.statusCode)
+    .json({ message: error.message, errors: error.data });
 };
 
 module.exports = errorHandler;

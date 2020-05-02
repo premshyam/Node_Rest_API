@@ -1,3 +1,4 @@
+const HttpStatus = require("http-status-codes");
 const Cart = require("../models/Cart");
 //module to catch request validation Result
 const { validationResult } = require("express-validator");
@@ -5,7 +6,7 @@ const { validationResult } = require("express-validator");
 exports.add_item = (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return res.status(422).json({
+    return res.status(HttpStatus.UNPROCESSABLE_ENTITY).json({
       message: "Server side validation failed",
       errors: errors.array(),
     });
@@ -35,24 +36,22 @@ exports.add_item = (req, res) => {
         }
         return cartObj.save();
       } else {
-        res.json({
-          status: "failed",
+        res.status(HttpStatus.UNPROCESSABLE_ENTITY).json({
           message: "Cart Not Found",
+          errors: [],
         });
       }
     })
     .then((cart) => {
       res.json({
-        status: "success",
-        message: "Menu Added to Cart",
-        data: cart,
+        message: "Added items to Cart",
+        cart: cart,
       });
     })
     .catch((err) => {
-      res.json({
-        status: "error",
+      res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
         message: "Something went wrong",
-        error: err,
+        errors: err,
       });
     });
 };
@@ -60,7 +59,7 @@ exports.add_item = (req, res) => {
 exports.remove_item = (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return res.status(422).json({
+    return res.status(HttpStatus.UNPROCESSABLE_ENTITY).json({
       message: "Server side validation failed",
       errors: errors.array(),
     });
@@ -78,54 +77,25 @@ exports.remove_item = (req, res) => {
         }
         return cartObj.save();
       } else {
-        res.json({
-          status: "failed",
+        res.status(HttpStatus.UNPROCESSABLE_ENTITY).json({
           message: "Cart Not Found",
+          errors: [],
         });
       }
     })
     .then((cart) => {
       res.json({
-        status: "success",
         message: "Menu removed from Cart",
-        data: cart,
+        cart: cart,
       });
     })
     .catch((err) => {
-      res.json({
-        status: "error",
+      res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
         message: "Something went wrong",
-        error: err,
+        errors: err,
       });
     });
 };
-
-// Item Details
-// exports.item_details = async (req, res) => {
-//   await Cart.findOne({ _id: req.params.id })
-//     .then(result => {
-//       if (result) {
-//         res.json({
-//           status: "success",
-//           message: "Item Found",
-//           data: result
-//         });
-//       } else {
-//         res.json({
-//           status: "failed",
-//           message: "No Item Found",
-//           data: result
-//         });
-//       }
-//     })
-//     .catch(err => {
-//       res.json({
-//         status: "error",
-//         message: "Something went wrong",
-//         error: err
-//       });
-//     });
-// };
 
 // Customer Cart Items
 exports.cart_items = async (req, res) => {
@@ -133,22 +103,20 @@ exports.cart_items = async (req, res) => {
     .then((result) => {
       if (result) {
         res.json({
-          status: "success",
           message: "Cart Items Found",
-          data: result,
+          cart: result,
         });
       } else {
-        res.json({
-          status: "failed",
+        res.status(HttpStatus.UNPROCESSABLE_ENTITY).json({
           message: "Cart Not Found",
+          errors: [],
         });
       }
     })
     .catch((err) => {
-      res.json({
-        status: "error",
+      res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
         message: "Something went wrong",
-        error: err,
+        errors: err,
       });
     });
 };
@@ -161,23 +129,22 @@ exports.empty_cart = async (req, res) => {
         cartObj.cart = [];
         return cartObj.save();
       } else {
-        res.json({
-          status: "failed",
+        res.status(HttpStatus.UNPROCESSABLE_ENTITY).json({
           message: "Cart Not Found",
+          errors: [],
         });
       }
     })
     .then((cartObj) => {
       res.json({
-        status: "success",
         message: "Cart empty",
+        cart: cartObj,
       });
     })
     .catch((err) => {
-      res.json({
-        status: "error",
+      res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
         message: "Something went wrong",
-        error: err,
+        errors: err,
       });
     });
 };

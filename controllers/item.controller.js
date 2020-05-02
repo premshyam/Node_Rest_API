@@ -1,3 +1,4 @@
+const HttpStatus = require("http-status-codes");
 const Item = require("../models/Item");
 //module to catch request validation Result
 const { validationResult } = require("express-validator");
@@ -6,7 +7,7 @@ const { validationResult } = require("express-validator");
 exports.create_menu = async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return res.status(422).json({
+    return res.status(HttpStatus.UNPROCESSABLE_ENTITY).json({
       message: "Server side validation failed",
       errors: errors.array(),
     });
@@ -27,7 +28,6 @@ exports.create_menu = async (req, res) => {
     .save()
     .then((result) => {
       res.json({
-        status: "success",
         message: "Menu Create Successfully",
         data: result,
       });
@@ -64,7 +64,7 @@ exports.caterer_items = async (req, res) => {
 exports.update_menu = async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return res.status(422).json({
+    return res.status(HttpStatus.UNPROCESSABLE_ENTITY).json({
       message: "Server side validation failed",
       errors: errors.array(),
     });
@@ -127,7 +127,7 @@ exports.menu = async (req, res) => {
 exports.delete_menu = async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return res.status(422).json({
+    return res.status(HttpStatus.UNPROCESSABLE_ENTITY).json({
       message: "Server side validation failed",
       errors: errors.array(),
     });

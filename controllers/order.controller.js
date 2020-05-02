@@ -1,3 +1,4 @@
+const HttpStatus = require("http-status-codes");
 const Order = require("../models/Order");
 const { validationResult } = require("express-validator");
 const axios = require("axios");
@@ -7,7 +8,7 @@ const qs = require("querystring");
 exports.create_order = async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return res.status(422).json({
+    return res.status(HttpStatus.UNPROCESSABLE_ENTITY).json({
       message: "Server side validation failed",
       errors: errors.array(),
     });
@@ -65,10 +66,9 @@ exports.create_order = async (req, res) => {
         });
     })
     .catch((err) => {
-      res.json({
-        status: "error",
+      res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
         message: "Something went wrong",
-        error: err,
+        errors: err,
       });
     });
 };
@@ -78,16 +78,14 @@ exports.orders = async (req, res) => {
   await Order.find()
     .then((result) => {
       res.json({
-        status: "success",
         message: result.length + " Orders Found",
-        data: result,
+        order: result,
       });
     })
     .catch((err) => {
-      res.json({
-        status: "error",
+      res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
         message: "Something went wrong",
-        error: err,
+        errors: err,
       });
     });
 };
@@ -98,23 +96,20 @@ exports.order_details = async (req, res) => {
     .then((result) => {
       if (result) {
         res.json({
-          status: "success",
           message: "Order Found",
-          data: result,
+          order: result,
         });
       } else {
-        res.json({
-          status: "failed",
+        res.status(HttpStatus.UNPROCESSABLE_ENTITY).json({
           message: "No Order Found",
-          data: result,
+          errors: [],
         });
       }
     })
     .catch((err) => {
-      res.json({
-        status: "error",
+      res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
         message: "Something went wrong",
-        error: err,
+        errors: err,
       });
     });
 };
@@ -123,7 +118,7 @@ exports.order_details = async (req, res) => {
 exports.customer_orders = async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return res.status(422).json({
+    return res.status(HttpStatus.UNPROCESSABLE_ENTITY).json({
       message: "Server side validation failed",
       errors: errors.array(),
     });
@@ -131,16 +126,14 @@ exports.customer_orders = async (req, res) => {
   await Order.find({ customer_id: req.body.userId })
     .then((result) => {
       res.json({
-        status: "success",
         message: result.length + " Orders Found",
         orders: result,
       });
     })
     .catch((err) => {
-      res.json({
-        status: "error",
+      res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
         message: "Something went wrong",
-        error: err,
+        errors: err,
       });
     });
 };
@@ -149,7 +142,7 @@ exports.customer_orders = async (req, res) => {
 exports.caterer_orders = async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return res.status(422).json({
+    return res.status(HttpStatus.UNPROCESSABLE_ENTITY).json({
       message: "Server side validation failed",
       errors: errors.array(),
     });
@@ -157,16 +150,14 @@ exports.caterer_orders = async (req, res) => {
   await Order.find({ caterer_id: req.body.userId })
     .then((result) => {
       res.json({
-        status: "success",
         message: result.length + " Orders Found",
         orders: result,
       });
     })
     .catch((err) => {
-      res.json({
-        status: "error",
+      res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
         message: "Something went wrong",
-        error: err,
+        errors: err,
       });
     });
 };
@@ -178,23 +169,15 @@ exports.update_order = async (req, res) => {
     { $set: { order_status: req.body.status } },
     (err, order) => {
       if (err) {
-        res.json({
-          status: "error",
+        res.status(HttpStatus.UNPROCESSABLE_ENTITY).json({
           message: "Something went wrong",
           error: err,
         });
       } else {
-        if (order) {
-          res.json({
-            status: "success",
-            message: "Order Updated Successfully",
-          });
-        } else {
-          res.json({
-            status: "failed",
-            message: "No Order Found",
-          });
-        }
+        res.json({
+          message: "Order Updated Successfully",
+          order: order,
+        });
       }
     }
   );
@@ -206,21 +189,19 @@ exports.delete_order = async (req, res) => {
     .then((result) => {
       if (result) {
         res.json({
-          status: "success",
           message: "Order Deleted Successfully",
         });
       } else {
-        res.json({
-          status: "failed",
+        res.status(HttpStatus.UNPROCESSABLE_ENTITY).json({
           message: "Order Not Found",
+          errors: [],
         });
       }
     })
     .catch((err) => {
-      res.json({
-        status: "error",
+      res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
         message: "Something went wrong",
-        error: err,
+        errors: err,
       });
     });
 };
