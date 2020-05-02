@@ -109,7 +109,7 @@ exports.login = async (req, res) => {
     .then((customer) => {
       if (!customer) {
         // If Customer doesn't Exists
-        res.json({
+        res.status(422).json({
           status: "failed",
           message: "Invalid Email, Phone or password",
         });
@@ -138,14 +138,14 @@ exports.login = async (req, res) => {
           userId: id.toString(),
         });
       } else {
-        res.json({
+        res.status(422).json({
           status: "failed",
           message: "Invalid Email, Phone or password",
         });
       }
     })
     .catch((err) => {
-      res.json({
+      res.status(500).json({
         status: "error",
         message: "Something went wrong",
         error: err,
