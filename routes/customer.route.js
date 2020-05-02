@@ -39,8 +39,10 @@ module.exports = (app) => {
   app.post(
     "/api/customer_login",
     [
-      body("phone", "Enter a valid registered phone number")
-        .if(body("phone").exists())
+      body("phone", "Enter a valid phone number")
+        .if(body("email").not().exists({ checkNull: true }))
+        .exists({ checkNull: true })
+        .if(body("phone").exists({ checkNull: true }))
         .isMobilePhone()
         .isLength({ min: 10, max: 10 })
         .custom((email) => {
@@ -50,8 +52,11 @@ module.exports = (app) => {
         "password",
         "Password should be combination of one uppercase , one lower case, one special char, one digit and min 8 , max 15 char long"
       ).matches(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9]).{8,}$/, "i"),
-      body("email", "Enter valid registered email")
-        .if(body("email").exists())
+      body("email", "Enter valid email")
+        .if(body("phone").not().exists({ checkNull: true }))
+        .exists({ checkNull: true })
+        .if(body("email").exists({ checkNull: true }))
+        .isEmail()
         .custom((email) => {
           return Customer.isCustomerEmail(email);
         }),
@@ -89,25 +94,25 @@ module.exports = (app) => {
     //validators for request body fields
     [
       body("first_name", "Invalid First name, enter 1 to 15 characters only")
-        .if(body("first_name").exists())
+        .optional()
         .trim()
         .isLength({ min: 1, max: 15 }),
       body("last_name", "Invalid Last name, enter 1 to 15 characters only")
-        .if(body("last_name").exists())
+        .optional()
         .trim()
         .isLength({ min: 1, max: 15 }),
       body(
         "password",
         "Password should be combination of one uppercase , one lower case, one special char, one digit and min 8 , max 15 char long"
       )
-        .if(body("password").exists())
+        .optional()
         .matches(
           /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9]).{8,}$/,
           "i"
         ),
-      body("email", "Enter valid email").if(body("email").exists()).isEmail(),
+      body("email", "Enter valid email").optional().isEmail(),
       body("phone", "Enter a valid phone number")
-        .if(body("phone").exists())
+        .optional()
         .isMobilePhone()
         .isLength({ min: 10, max: 10 }),
     ],

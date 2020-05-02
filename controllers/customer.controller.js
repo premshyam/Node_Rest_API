@@ -55,7 +55,7 @@ exports.signup = async (req, res) => {
       const authToken = jwt.sign(
         { email: customer.email, userId: customer.id },
         process.env.JWT_PRIVATE_KEY,
-        { expiresIn: "1h" }
+        { expiresIn: process.env.JWT_TOKEN_EXPIERY }
       );
       res.json({
         message:
@@ -204,6 +204,7 @@ exports.update_customer = async (req, res) => {
   await Customer.findByIdAndUpdate(
     req.body.userId,
     { $set: req.body },
+    { new: true },
     (err, customer) => {
       if (err) {
         res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
