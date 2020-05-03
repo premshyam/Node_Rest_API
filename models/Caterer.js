@@ -48,7 +48,6 @@ let catererSchema = new Schema({
   availability: { type: Boolean, required: true, default: false },
   menu_starting_from: { type: Number, required: true },
   delivery_fee: { type: Number, required: true },
-  live_kitchen: { type: Boolean, required: true, default: false },
   image: { type: String, required: true },
 });
 
