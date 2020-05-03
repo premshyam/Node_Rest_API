@@ -6,6 +6,13 @@ mongoose.set("useFindAndModify", false);
 let catererSchema = new Schema({
   name: { type: String, required: true },
   location: { type: String, required: true },
+  serviceableArea: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "ServiceableArea",
+      required: true,
+    },
+  ],
   cateringType: [
     {
       type: mongoose.Schema.Types.ObjectId,

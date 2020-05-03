@@ -14,6 +14,7 @@ module.exports = (app) => {
   const Cuisine = require("../models/Cuisine");
   const VendorType = require("../models/VendorType");
   const Event = require("../models/Event");
+  const ServiceableArea = require("../models/ServiceableArea");
   const Otp = require("../models/Otp");
   const AdminBroOptions = {
     resources: [
@@ -87,6 +88,7 @@ module.exports = (app) => {
       Cuisine,
       VendorType,
       Event,
+      ServiceableArea,
       Otp,
     ],
     branding: {
