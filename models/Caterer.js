@@ -5,14 +5,44 @@ mongoose.set("useFindAndModify", false);
 
 let catererSchema = new Schema({
   name: { type: String, required: true },
+  location: { type: String, required: true },
+  cateringType: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "CateringType",
+      required: true,
+    },
+  ],
+  dietaryRestrictions: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Dietary",
+      required: true,
+    },
+  ],
+  cuisineType: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Cuisine",
+      required: true,
+    },
+  ],
+  vendorType: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "VendorType",
+      required: true,
+    },
+  ],
   speciality: { type: Array, required: true },
-  event: { type: Array, required: true },
-  veg: { type: Boolean, required: true, default: false },
+  event: [
+    { type: mongoose.Schema.Types.ObjectId, ref: "Event", required: true },
+  ],
   description: { type: String, required: true },
   email: { type: String, required: true },
   password: { type: String, required: true, select: false },
   phone: { type: String, required: true },
-  minimum_order_quantity: { type: Number, required: true },
+  minimum_order_value: { type: Number, required: true },
   // lead time is hours
   lead_time: { type: Number, required: true },
   availability: { type: Boolean, required: true, default: false },

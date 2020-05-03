@@ -16,6 +16,9 @@ let itemSchema = new Schema({
       items: [
         {
           item_name: { type: String, required: true },
+          item_description: { type: String, required: false },
+          spice_level: { type: Number, required: false },
+          dietary_restrictions: { type: String, required: true },
           price: { type: Number, required: true },
         },
       ],
@@ -27,6 +30,9 @@ let itemSchema = new Schema({
       items: [
         {
           item_name: { type: String, required: true },
+          item_description: { type: String, required: false },
+          spice_level: { type: Number, required: false },
+          dietary_restrictions: { type: String, required: true },
           price: { type: Number, required: true },
         },
       ],
@@ -38,6 +44,9 @@ let itemSchema = new Schema({
       items: [
         {
           item_name: { type: String, required: true },
+          item_description: { type: String, required: false },
+          spice_level: { type: Number, required: false },
+          dietary_restrictions: { type: String, required: true },
           price: { type: Number, required: true },
         },
       ],
@@ -49,6 +58,9 @@ let itemSchema = new Schema({
       items: [
         {
           item_name: { type: String, required: true },
+          item_description: { type: String, required: false },
+          spice_level: { type: Number, required: false },
+          dietary_restrictions: { type: String, required: true },
           price: { type: Number, required: true },
         },
       ],
@@ -60,6 +72,9 @@ let itemSchema = new Schema({
       items: [
         {
           item_name: { type: String, required: true },
+          item_description: { type: String, required: false },
+          spice_level: { type: Number, required: false },
+          dietary_restrictions: { type: String, required: true },
           price: { type: Number, required: true },
         },
       ],
@@ -71,6 +86,9 @@ let itemSchema = new Schema({
       items: [
         {
           item_name: { type: String, required: true },
+          item_description: { type: String, required: false },
+          spice_level: { type: Number, required: false },
+          dietary_restrictions: { type: String, required: true },
           price: { type: Number, required: true },
         },
       ],

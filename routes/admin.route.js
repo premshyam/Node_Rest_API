@@ -9,6 +9,11 @@ module.exports = (app) => {
   const Menu = require("../models/Menu");
   const Item = require("../models/Item");
   const Order = require("../models/Order");
+  const CateringType = require("../models/CateringType");
+  const Dietary = require("../models/Dietary");
+  const Cuisine = require("../models/Cuisine");
+  const VendorType = require("../models/VendorType");
+  const Event = require("../models/Event");
   const Otp = require("../models/Otp");
   const AdminBroOptions = {
     resources: [
@@ -77,6 +82,11 @@ module.exports = (app) => {
       Menu,
       Item,
       Order,
+      CateringType,
+      Dietary,
+      Cuisine,
+      VendorType,
+      Event,
       Otp,
     ],
     branding: {
