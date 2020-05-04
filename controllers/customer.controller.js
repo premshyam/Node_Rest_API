@@ -298,31 +298,31 @@ exports.otp_verification = async (req, res) => {
           errors: [],
         });
         return;
+      } else {
+        return Customer.findOne({ _id: otpObj._userId });
       }
-      return Customer.findOne({ _id: otpObj._userId });
     })
     .then((customer) => {
       if (!customer) {
-        res.status(HttpStatus.UNPROCESSABLE_ENTITY).json({
-          message: "Customer Not Found",
-          errors: [],
-        });
         return;
-      }
-      if (customer.verified) {
+      } else if (customer.verified) {
         res.json({
           message: "Customer already been verified",
           customer: customer,
         });
+        return;
+      } else {
+        customer.verified = true;
+        return customer.save();
       }
-      customer.verified = true;
-      return customer.save();
     })
     .then((customer) => {
-      res.json({
-        message: "Customer successfully verified",
-        customer: customer,
-      });
+      if (customer) {
+        res.json({
+          message: "Customer successfully verified",
+          customer: customer,
+        });
+      }
     })
     .catch((err) => {
       res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
@@ -350,7 +350,7 @@ exports.resend_otp = async (req, res) => {
       return transporter.sendMail({
         to: req.email,
         from: "info@catersmart.in",
-        subject: otpObj.otp + "is the OTP",
+        subject: otpObj.otp + " is the OTP",
         html: `
       <p>${otpObj.otp} is the OTP to verify your email at catersmart.</p>
      `,
