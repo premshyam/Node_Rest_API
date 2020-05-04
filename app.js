@@ -9,13 +9,12 @@ const cloudinary = require("cloudinary");
 //ODM for mongoDB (a NoSQL DB)
 const mongoose = require("mongoose");
 //
+const serviceableAreaRoutes = require("./routes/serviceableArea");
+const filtersRoutes = require("./routes/filters");
 const errorHandler = require("./util/error.handler");
+
 //create the app
 const app = express();
-//built-in module To handle file paths
-// var path = require("path");
-//built-in module To handle the file system
-// var fs = require("fs");
 //global object called __basedir scop is anywhere in the project
 global.__basedir = __dirname;
 // middleware that only parses json
@@ -42,6 +41,8 @@ require("./routes/menu.route")(app);
 require("./routes/item.route")(app);
 require("./routes/cart.route")(app);
 require("./routes/order.route")(app);
+app.use("/api/serviceableArea", serviceableAreaRoutes);
+app.use("/api/filters", filtersRoutes);
 app.get("/", (req, res) => {
   res.send("Welcome");
 });

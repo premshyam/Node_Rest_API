@@ -1,3 +1,4 @@
+const HttpStatus = require("http-status-codes");
 //jwt module for authentication
 const jwt = require("jsonwebtoken");
 
@@ -23,14 +24,14 @@ module.exports = (req, res, next) => {
   } catch (err) {
     //catch errors
     //throw error
-    err.statusCode = 500;
+    err.statusCode = HttpStatus.UNAUTHORIZED;
     throw err;
   }
   //if the token was invalid
   if (!decodedToken) {
     //throw error saying the req is not authenticated
     const error = new Error("Not authenticated.");
-    error.statusCode = 401;
+    error.statusCode = HttpStatus.UNAUTHORIZED;
     throw error;
   }
   req.body.userId = decodedToken.userId;
