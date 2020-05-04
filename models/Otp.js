@@ -10,7 +10,12 @@ const otpSchema = new Schema({
     ref: "Customer",
   },
   otp: { type: Number, required: true },
-  createdAt: { type: Date, required: true, default: Date.now, expires: 1800 },
+  createdAt: {
+    type: Date,
+    required: true,
+    default: Date.now,
+    expires: process.env.OTP_EXPIERY,
+  },
 });
 
 module.exports = mongoose.model("Otp", otpSchema);

@@ -212,51 +212,44 @@ exports.update_customer = async (req, res) => {
           errors: err,
         });
       } else {
-        if (customer) {
-          if (customer.verified) {
-            res.json({
-              message: "Customer Updated Successfully",
-              customer: customer,
-            });
-          } else {
-            // generate OTP for this Customer
-            const otp = new Otp({
-              _userId: customer.id,
-              otp: Math.floor(100000 + Math.random() * 900000),
-            });
-
-            otp
-              .save()
-              .then((otpObj) => {
-                res.json({
-                  message:
-                    "Customer Updated Successfully, A verification email has will be sent",
-                  customer: customer,
-                });
-                return transporter.sendMail({
-                  to: req.body.email,
-                  from: "info@catersmart.in",
-                  subject: "Welcome " + req.body.first_name,
-                  html: `
-                <p>${otpObj.otp} is the OTP to verify your email at catersmart.</p>
-               `,
-                });
-              })
-              .then((result) => {
-                console.log(result);
-              })
-              .catch((err) => {
-                res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
-                  message: "Something went wrong",
-                  errors: err,
-                });
-              });
-          }
-        } else {
+        if (customer.verified) {
           res.json({
-            message: "Customer Not Found",
+            message: "Customer Updated Successfully",
             customer: customer,
           });
+        } else {
+          // generate OTP for this Customer
+          const otp = new Otp({
+            _userId: customer.id,
+            otp: Math.floor(100000 + Math.random() * 900000),
+          });
+
+          otp
+            .save()
+            .then((otpObj) => {
+              res.json({
+                message:
+                  "Customer Updated Successfully, A verification email has will be sent",
+                customer: customer,
+              });
+              return transporter.sendMail({
+                to: req.body.email,
+                from: "info@catersmart.in",
+                subject: "Welcome " + req.body.first_name,
+                html: `
+                <p>${otpObj.otp} is the OTP to verify your email at catersmart.</p>
+               `,
+              });
+            })
+            .then((result) => {
+              console.log(result);
+            })
+            .catch((err) => {
+              res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
+                message: "Something went wrong",
+                errors: err,
+              });
+            });
         }
       }
     }
@@ -300,7 +293,7 @@ exports.otp_verification = async (req, res) => {
   await Otp.findOne({ otp: req.body.otp })
     .then((otpObj) => {
       if (!otpObj) {
-        res.status(HttpStatus.BAD_REQUEST).json({
+        res.status(HttpStatus.UNPROCESSABLE_ENTITY).json({
           message: "OTP expired or Invalid.",
           errors: [],
         });
@@ -310,7 +303,7 @@ exports.otp_verification = async (req, res) => {
     })
     .then((customer) => {
       if (!customer) {
-        res.status(HttpStatus.BAD_REQUEST).json({
+        res.status(HttpStatus.UNPROCESSABLE_ENTITY).json({
           message: "Customer Not Found",
           errors: [],
         });
