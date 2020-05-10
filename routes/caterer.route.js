@@ -91,7 +91,18 @@ module.exports = (app) => {
   );
 
   // All caterers
-  app.get("/api/caterers", caterer_controller.caterers);
+  app.post(
+    "/api/caterers",
+    [
+      body("location", "Invalid location").optional(),
+      body("cateringType", "Invalid cateringType").optional(),
+      body("dietary", "Invalid dietary").optional(),
+      body("cuisine", "Invalid cuisine").optional(),
+      body("vendorType", "Invalid vendorType").optional(),
+      body("event", "Invalid event").optional(),
+    ],
+    caterer_controller.caterers
+  );
 
   // Update caterer
   app.put(
@@ -102,25 +113,25 @@ module.exports = (app) => {
     //Caterer field validations
     [
       body("name", "Invalid name, enter 1 to 15 characters only")
-        .if(body("name").exists())
+        .optional()
         .trim()
         .isLength({ min: 1, max: 15 }),
       body("description", "Invalid Description, enter 1 to 50 characters")
-        .if(body("description").exists())
+        .optional()
         .trim()
         .isLength({ min: 1, max: 50 }),
       body(
         "password",
         "Password should be combination of one uppercase , one lower case, one special char, one digit and min 8 , max 15 char long"
       )
-        .if(body("password").exists())
+        .optional()
         .matches(
           /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9]).{8,}$/,
           "i"
         ),
-      body("email", "Enter valid email").if(body("email").exists()).isEmail(),
+      body("email", "Enter valid email").optional().isEmail(),
       body("phone", "Enter a valid phone number")
-        .if(body("phone").exists())
+        .optional()
         .isMobilePhone()
         .isLength({ min: 10, max: 10 }),
     ],

@@ -189,8 +189,60 @@ exports.caterer_details = async (req, res) => {
 
 // Fetch All Caterers
 exports.caterers = async (req, res) => {
-  await Caterer.find()
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(HttpStatus.UNPROCESSABLE_ENTITY).json({
+      message: "Server side validation failed",
+      errors: errors.array(),
+    });
+  }
+  let query = { availability: true };
+  const operator = "$and";
+  if (req.body.location) {
+    // console.log(req.body);
+    query["serviceableArea"] = req.body.location;
+  }
+  if (req.body.cateringType) {
+    if (query[operator]) {
+      query[operator].push({ cateringType: { $in: req.body.cateringType } });
+    } else {
+      query[operator] = [{ cateringType: { $in: req.body.cateringType } }];
+    }
+  }
+  if (req.body.dietary) {
+    if (query[operator]) {
+      query[operator].push({ dietaryRestrictions: { $in: req.body.dietary } });
+    } else {
+      query[operator] = [{ dietaryRestrictions: { $in: req.body.dietary } }];
+    }
+  }
+  if (req.body.cuisine) {
+    if (query[operator]) {
+      query[operator].push({ cuisineType: { $in: req.body.cuisine } });
+    } else {
+      query[operator] = [{ cuisineType: { $in: req.body.cuisine } }];
+    }
+  }
+  if (req.body.vendorType) {
+    if (query[operator]) {
+      query[operator].push({ vendorType: { $in: req.body.vendorType } });
+    } else {
+      query[operator] = [{ vendorType: { $in: req.body.vendorType } }];
+    }
+  }
+  if (req.body.event) {
+    if (query[operator]) {
+      query[operator].push({ event: { $in: req.body.event } });
+    } else {
+      query[operator] = [{ event: { $in: req.body.event } }];
+    }
+  }
+  // console.log(query);
+  await Caterer.find(query)
     .select("-email -phone")
+    .populate(
+      "serviceableArea cateringType dietaryRestrictions cuisineType vendorType event"
+    )
     .then((result) => {
       res.json({
         message: result.length + " Caterers Found",
