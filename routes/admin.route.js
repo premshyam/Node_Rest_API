@@ -15,7 +15,17 @@ module.exports = (app) => {
   const VendorType = require("../models/VendorType");
   const Event = require("../models/Event");
   const ServiceableArea = require("../models/ServiceableArea");
+  const GeneralCoupon = require("../models/GeneralCoupon");
+  const CatererCoupon = require("../models/CatererCoupon");
   const Otp = require("../models/Otp");
+  const filterParent = {
+    name: "filters",
+    icon: "Filter",
+  };
+  const couponParent = {
+    name: "coupons",
+    icon: "Wallet",
+  };
   const AdminBroOptions = {
     resources: [
       {
@@ -83,13 +93,15 @@ module.exports = (app) => {
       Menu,
       Item,
       Order,
-      CateringType,
-      Dietary,
-      Cuisine,
-      VendorType,
-      Event,
-      ServiceableArea,
       Otp,
+      { resource: CateringType, options: { parent: filterParent } },
+      { resource: Dietary, options: { parent: filterParent } },
+      { resource: Cuisine, options: { parent: filterParent } },
+      { resource: VendorType, options: { parent: filterParent } },
+      { resource: Event, options: { parent: filterParent } },
+      { resource: ServiceableArea, options: { parent: filterParent } },
+      { resource: GeneralCoupon, options: { parent: couponParent } },
+      { resource: CatererCoupon, options: { parent: couponParent } },
     ],
     branding: {
       companyName: "Catersmart",

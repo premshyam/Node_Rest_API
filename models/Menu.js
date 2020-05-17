@@ -14,6 +14,7 @@ let menuSchema = new Schema({
   image: { type: String, required: true },
   price: { type: Number, required: true },
   services: { type: Array, required: false, allowNull: true },
+  popularity: { type: Boolean, required: true, default: false },
   welcome_drinks: [
     {
       dishes: { type: String, required: true },
@@ -22,7 +23,11 @@ let menuSchema = new Schema({
         {
           name: { type: String, required: true },
           spice_level: { type: Number, required: false },
-          dietary_restrictions: { type: String, required: true },
+          dietary_restrictions: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Dietary",
+            required: true,
+          },
         },
       ],
     },
@@ -35,7 +40,11 @@ let menuSchema = new Schema({
         {
           name: { type: String, required: true },
           spice_level: { type: Number, required: false },
-          dietary_restrictions: { type: String, required: true },
+          dietary_restrictions: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Dietary",
+            required: true,
+          },
         },
       ],
     },
@@ -48,7 +57,11 @@ let menuSchema = new Schema({
         {
           name: { type: String, required: true },
           spice_level: { type: Number, required: false },
-          dietary_restrictions: { type: String, required: true },
+          dietary_restrictions: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Dietary",
+            required: true,
+          },
         },
       ],
     },
@@ -61,7 +74,11 @@ let menuSchema = new Schema({
         {
           name: { type: String, required: true },
           spice_level: { type: Number, required: false },
-          dietary_restrictions: { type: String, required: true },
+          dietary_restrictions: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Dietary",
+            required: true,
+          },
         },
       ],
     },
@@ -74,7 +91,11 @@ let menuSchema = new Schema({
         {
           name: { type: String, required: true },
           spice_level: { type: Number, required: false },
-          dietary_restrictions: { type: String, required: true },
+          dietary_restrictions: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Dietary",
+            required: true,
+          },
         },
       ],
     },
@@ -87,7 +108,11 @@ let menuSchema = new Schema({
         {
           name: { type: String, required: true },
           spice_level: { type: Number, required: false },
-          dietary_restrictions: { type: String, required: true },
+          dietary_restrictions: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Dietary",
+            required: true,
+          },
         },
       ],
     },

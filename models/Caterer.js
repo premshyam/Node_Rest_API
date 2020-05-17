@@ -53,9 +53,12 @@ let catererSchema = new Schema({
   // lead time is hours
   lead_time: { type: Number, required: true },
   availability: { type: Boolean, required: true, default: false },
+  popularity: { type: Boolean, required: true, default: false },
   menu_starting_from: { type: Number, required: true },
   delivery_fee: { type: Number, required: true },
   image: { type: String, required: true },
+  rating: { type: Number, required: true, default: 0 },
+  reviews: [{ type: String, required: false }],
 });
 
 catererSchema.statics.isEmailRegistered = function (email) {
