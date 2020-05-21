@@ -4,7 +4,7 @@ const Schema = mongoose.Schema;
 mongoose.set("useFindAndModify", false);
 
 const dietarySchema = new Schema({
-  dietaryRestrictions: {
+  filterName: {
     type: String,
     required: true,
     unique: true,

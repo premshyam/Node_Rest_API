@@ -14,6 +14,7 @@ module.exports = (app) => {
   const Cuisine = require("../models/Cuisine");
   const VendorType = require("../models/VendorType");
   const Event = require("../models/Event");
+  const Dish = require("../models/Dish");
   const ServiceableArea = require("../models/ServiceableArea");
   const GeneralCoupon = require("../models/GeneralCoupon");
   const CatererCoupon = require("../models/CatererCoupon");
@@ -99,6 +100,7 @@ module.exports = (app) => {
       { resource: Cuisine, options: { parent: filterParent } },
       { resource: VendorType, options: { parent: filterParent } },
       { resource: Event, options: { parent: filterParent } },
+      { resource: Dish, options: { parent: filterParent } },
       { resource: ServiceableArea, options: { parent: filterParent } },
       { resource: GeneralCoupon, options: { parent: couponParent } },
       { resource: CatererCoupon, options: { parent: couponParent } },
@@ -110,28 +112,28 @@ module.exports = (app) => {
   };
   const adminBro = new AdminBro(AdminBroOptions);
 
-  // const router = AdminBroExpress.buildRouter(adminBro);
-  const router = AdminBroExpress.buildAuthenticatedRouter(
-    adminBro,
-    {
-      authenticate: async (email, password) => {
-        // console.log(email, password, process.env.ADMIN_PASSWORD);
-        if (
-          process.env.ADMIN_EMAIL === email &&
-          process.env.ADMIN_PASSWORD === password
-        ) {
-          return {
-            email: email,
-            password: password,
-          };
-        }
-        return false;
-      },
-      cookieName: "admin-bro",
-      cookiePassword: "somepassword",
-    },
-    undefined,
-    { resave: false, saveUninitialized: true }
-  );
+  const router = AdminBroExpress.buildRouter(adminBro);
+  // const router = AdminBroExpress.buildAuthenticatedRouter(
+  //   adminBro,
+  //   {
+  //     authenticate: async (email, password) => {
+  //       // console.log(email, password, process.env.ADMIN_PASSWORD);
+  //       if (
+  //         process.env.ADMIN_EMAIL === email &&
+  //         process.env.ADMIN_PASSWORD === password
+  //       ) {
+  //         return {
+  //           email: email,
+  //           password: password,
+  //         };
+  //       }
+  //       return false;
+  //     },
+  //     cookieName: "admin-bro",
+  //     cookiePassword: "somepassword",
+  //   },
+  //   undefined,
+  //   { resave: false, saveUninitialized: true }
+  // );
   app.use(AdminBroOptions.rootPath, router);
 };

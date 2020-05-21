@@ -3,21 +3,51 @@ const Dietary = require("../models/Dietary");
 const Cuisine = require("../models/Cuisine");
 const VendorType = require("../models/VendorType");
 const Event = require("../models/Event");
+const Dish = require("../models/Dish");
 
 exports.fetch_filters = async (req, res, next) => {
   try {
-    const cateringType = await CateringType.find();
-    const dietary = await Dietary.find();
-    const cuisine = await Cuisine.find();
-    const vendorType = await VendorType.find();
-    const event = await Event.find();
+    const cateringType = await CateringType.find().select("-__v");
+    const dietary = await Dietary.find().select("-__v");
+    const cuisine = await Cuisine.find().select("-__v");
+    const vendorType = await VendorType.find().select("-__v");
+    const event = await Event.find().select("-__v");
+    const dish = await Dish.find().select("-__v");
+    const filterArray = [
+      {
+        filterType: "general",
+        mainFilterName: "cateringType",
+        filterValues: cateringType,
+      },
+      {
+        filterType: "general",
+        mainFilterName: "dietary",
+        filterValues: dietary,
+      },
+      {
+        filterType: "general",
+        mainFilterName: "cuisine",
+        filterValues: cuisine,
+      },
+      {
+        filterType: "general",
+        mainFilterName: "vendorType",
+        filterValues: vendorType,
+      },
+      {
+        filterType: "event",
+        mainFilterName: null,
+        filterValues: event,
+      },
+      {
+        filterType: "dish",
+        mainFilterName: null,
+        filterValues: dish,
+      },
+    ];
     res.json({
       message: "Filters Found",
-      cateringType: cateringType,
-      dietary: dietary,
-      cuisine: cuisine,
-      vendorType: vendorType,
-      event: event,
+      filterArray: filterArray,
     });
   } catch (err) {
     res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({

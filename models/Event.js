@@ -4,7 +4,8 @@ const Schema = mongoose.Schema;
 mongoose.set("useFindAndModify", false);
 
 const eventSchema = new Schema({
-  eventType: { type: String, required: true, unique: true, dropDups: true },
+  filterName: { type: String, required: true, unique: true, dropDups: true },
+  image: { type: String, required: true },
 });
 
 module.exports = mongoose.model("Event", eventSchema);
