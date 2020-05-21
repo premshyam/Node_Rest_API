@@ -13,7 +13,7 @@ exports.fetch_filters = async (req, res, next) => {
     const vendorType = await VendorType.find().select("-__v");
     const event = await Event.find().select("-__v");
     const dish = await Dish.find().select("-__v");
-    const filterArray = [
+    const catererFilters = [
       {
         filterType: "general",
         mainFilterName: "cateringType",
@@ -47,7 +47,7 @@ exports.fetch_filters = async (req, res, next) => {
     ];
     res.json({
       message: "Filters Found",
-      filterArray: filterArray,
+      catererFilters: catererFilters,
     });
   } catch (err) {
     res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
