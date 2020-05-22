@@ -112,28 +112,28 @@ module.exports = (app) => {
   };
   const adminBro = new AdminBro(AdminBroOptions);
 
-  const router = AdminBroExpress.buildRouter(adminBro);
-  // const router = AdminBroExpress.buildAuthenticatedRouter(
-  //   adminBro,
-  //   {
-  //     authenticate: async (email, password) => {
-  //       // console.log(email, password, process.env.ADMIN_PASSWORD);
-  //       if (
-  //         process.env.ADMIN_EMAIL === email &&
-  //         process.env.ADMIN_PASSWORD === password
-  //       ) {
-  //         return {
-  //           email: email,
-  //           password: password,
-  //         };
-  //       }
-  //       return false;
-  //     },
-  //     cookieName: "admin-bro",
-  //     cookiePassword: "somepassword",
-  //   },
-  //   undefined,
-  //   { resave: false, saveUninitialized: true }
-  // );
+  // const router = AdminBroExpress.buildRouter(adminBro);
+  const router = AdminBroExpress.buildAuthenticatedRouter(
+    adminBro,
+    {
+      authenticate: async (email, password) => {
+        // console.log(email, password, process.env.ADMIN_PASSWORD);
+        if (
+          process.env.ADMIN_EMAIL === email &&
+          process.env.ADMIN_PASSWORD === password
+        ) {
+          return {
+            email: email,
+            password: password,
+          };
+        }
+        return false;
+      },
+      cookieName: "admin-bro",
+      cookiePassword: "somepassword",
+    },
+    undefined,
+    { resave: false, saveUninitialized: true }
+  );
   app.use(AdminBroOptions.rootPath, router);
 };

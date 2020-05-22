@@ -19,6 +19,7 @@ let itemSchema = new Schema({
           item_description: { type: String, required: false },
           item_image: { type: String, required: false },
           spice_level: { type: Number, required: false },
+          ribbon: { type: String, required: false },
           dietary_restrictions: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "Dietary",
@@ -39,6 +40,7 @@ let itemSchema = new Schema({
           item_description: { type: String, required: false },
           item_image: { type: String, required: false },
           spice_level: { type: Number, required: false },
+          ribbon: { type: String, required: false },
           dietary_restrictions: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "Dietary",
@@ -59,6 +61,7 @@ let itemSchema = new Schema({
           item_description: { type: String, required: false },
           item_image: { type: String, required: false },
           spice_level: { type: Number, required: false },
+          ribbon: { type: String, required: false },
           dietary_restrictions: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "Dietary",
@@ -79,6 +82,7 @@ let itemSchema = new Schema({
           item_description: { type: String, required: false },
           item_image: { type: String, required: false },
           spice_level: { type: Number, required: false },
+          ribbon: { type: String, required: false },
           dietary_restrictions: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "Dietary",
@@ -99,6 +103,7 @@ let itemSchema = new Schema({
           item_description: { type: String, required: false },
           item_image: { type: String, required: false },
           spice_level: { type: Number, required: false },
+          ribbon: { type: String, required: false },
           dietary_restrictions: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "Dietary",
@@ -119,6 +124,7 @@ let itemSchema = new Schema({
           item_description: { type: String, required: false },
           item_image: { type: String, required: false },
           spice_level: { type: Number, required: false },
+          ribbon: { type: String, required: false },
           dietary_restrictions: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "Dietary",
