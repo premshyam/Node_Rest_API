@@ -62,6 +62,7 @@ let catererSchema = new Schema({
     {
       name: { type: String, required: true },
       text: { type: String, required: true },
+      Date: { type: Date, required: true },
     },
   ],
 });
