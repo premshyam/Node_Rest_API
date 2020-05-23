@@ -237,7 +237,32 @@ exports.caterers = async (req, res) => {
       query[operator] = [{ event: { $in: req.body.event } }];
     }
   }
-  // console.log(query);
+  if (req.body.dish) {
+    if (query[operator]) {
+      query[operator].push({ dish: { $in: req.body.dish } });
+    } else {
+      query[operator] = [{ dish: { $in: req.body.dish } }];
+    }
+  }
+  if (req.body.corporateEvent) {
+    if (query[operator]) {
+      query[operator].push({
+        corporateEvent: { $in: req.body.corporateEvent },
+      });
+    } else {
+      query[operator] = [{ corporateEvent: { $in: req.body.corporateEvent } }];
+    }
+  }
+  if (req.body.name) {
+    if (query[operator]) {
+      query[operator].push({
+        name: { $in: req.body.name },
+      });
+    } else {
+      query[operator] = [{ name: { $in: req.body.name } }];
+    }
+  }
+  console.log(query);
   await Caterer.find(query)
     .select("-email -phone")
     .populate(
