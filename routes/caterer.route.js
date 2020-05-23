@@ -100,6 +100,8 @@ module.exports = (app) => {
       body("cuisine", "Invalid cuisine").optional(),
       body("vendorType", "Invalid vendorType").optional(),
       body("event", "Invalid event").optional(),
+      body("dish", "Invalid dish").optional(),
+      body("corporateEvent", "Invalid event").optional(),
     ],
     caterer_controller.caterers
   );

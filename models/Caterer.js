@@ -45,6 +45,14 @@ let catererSchema = new Schema({
   event: [
     { type: mongoose.Schema.Types.ObjectId, ref: "Event", required: true },
   ],
+  dish: [{ type: mongoose.Schema.Types.ObjectId, ref: "Dish", required: true }],
+  corporateEvent: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "CorporateEvent",
+      required: true,
+    },
+  ],
   description: { type: String, required: true },
   email: { type: String, required: true },
   password: { type: String, required: true, select: false },
