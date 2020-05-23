@@ -14,7 +14,7 @@ let menuSchema = new Schema({
   image: { type: String, required: true },
   price: { type: Number, required: true },
   services: { type: Array, required: false, allowNull: true },
-  popularity: { type: Boolean, required: true, default: false },
+  ribbon: { type: String, required: false },
   welcome_drinks: [
     {
       dishes: { type: String, required: true },

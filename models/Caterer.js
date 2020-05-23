@@ -53,7 +53,7 @@ let catererSchema = new Schema({
   // lead time is hours
   lead_time: { type: Number, required: true },
   availability: { type: Boolean, required: true, default: false },
-  popularity: { type: Boolean, required: true, default: false },
+  ribbon: { type: String, required: false },
   menu_starting_from: { type: Number, required: true },
   delivery_fee: { type: Number, required: true },
   image: { type: String, required: true },
