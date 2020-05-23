@@ -1,6 +1,7 @@
 module.exports = (app) => {
   const customer_controller = require("../controllers/customer.controller");
   const Customer = require("../models/Customer");
+  const Caterer = require("../models/Caterer");
   const { check, body } = require("express-validator");
   const isAuth = require("../middleware/is-auth");
   // Customer Registration
@@ -78,6 +79,26 @@ module.exports = (app) => {
     isAuth,
     [body("otp", "Invalid OTP").isNumeric().isLength({ min: 6, max: 6 })],
     customer_controller.otp_verification
+  );
+
+  // Customer add to favourite
+  app.post(
+    "/api/customer/add_to_favourite/",
+    isAuth,
+    [
+      body("caterer_id", "Invalid caterer Id").custom((catererId) => {
+        return Caterer.findById(catererId).then((result) => {
+          if (result) {
+            //
+            return true;
+          } else {
+            //
+            return Promise.reject("not a vaild caterer");
+          }
+        });
+      }),
+    ],
+    customer_controller.addCatererToFavourite
   );
 
   // resend Customer OTP

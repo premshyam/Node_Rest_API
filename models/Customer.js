@@ -3,15 +3,6 @@ const Schema = mongoose.Schema;
 
 mongoose.set("useFindAndModify", false);
 
-// const cartSchema = new Schema({
-//   menu_id: {
-//     type: mongoose.Schema.Types.ObjectId,
-//     ref: "Menu",
-//     required: true
-//   },
-//   quantity: { type: Number, required: true }
-// });
-
 const customerSchema = new Schema({
   first_name: { type: String, required: true },
   last_name: { type: String, required: true },
@@ -19,7 +10,15 @@ const customerSchema = new Schema({
   password: { type: String, required: true, select: false }, // by default exclude password from the query result
   phone: { type: String, required: true },
   verified: { type: Boolean, required: true, default: false },
-  // cart: [cartSchema],
+  favouriteCaterer: [
+    {
+      caterer_id: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Caterer",
+        required: true,
+      },
+    },
+  ],
 });
 
 customerSchema.statics.isEmailRegistered = function (email) {

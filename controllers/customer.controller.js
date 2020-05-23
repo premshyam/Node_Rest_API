@@ -282,6 +282,49 @@ exports.delete_customer = async (req, res) => {
     });
 };
 
+exports.addCatererToFavourite = async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(HttpStatus.UNPROCESSABLE_ENTITY).json({
+      message: "Server side validation failed",
+      errors: errors.array(),
+    });
+  }
+  const caterId = { caterer_id: req.body.caterer_id };
+  await Customer.findById(req.body.userId)
+    .then((customer) => {
+      if (customer.favouriteCaterer.length) {
+        if (
+          customer.favouriteCaterer.some(
+            (element) => element.caterer_id == caterId.caterer_id
+          )
+        ) {
+          let index = customer.favouriteCaterer.findIndex(
+            (i) => i.caterer_id == caterId.caterer_id
+          );
+          customer.favouriteCaterer.splice(index, 1);
+        } else {
+          customer.favouriteCaterer.push(caterId);
+        }
+      } else {
+        customer.favouriteCaterer.push(caterId);
+      }
+      return customer.save();
+    })
+    .then((customer) => {
+      res.json({
+        message: "Favourite Caterers",
+        favouriteCaterer: customer.favouriteCaterer,
+      });
+    })
+    .catch((err) => {
+      res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
+        message: "Something went wrong",
+        errors: err,
+      });
+    });
+};
+
 exports.otp_verification = async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
