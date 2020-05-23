@@ -3,6 +3,7 @@ const Dietary = require("../models/Dietary");
 const Cuisine = require("../models/Cuisine");
 const VendorType = require("../models/VendorType");
 const Event = require("../models/Event");
+const CorporateEvent = require("../models/CorporateEvent");
 const Dish = require("../models/Dish");
 
 exports.fetch_filters = async (req, res, next) => {
@@ -12,6 +13,7 @@ exports.fetch_filters = async (req, res, next) => {
     const cuisine = await Cuisine.find().select("-__v");
     const vendorType = await VendorType.find().select("-__v");
     const event = await Event.find().select("-__v");
+    const corporateEvent = await CorporateEvent.find().select("-__v");
     const dish = await Dish.find().select("-__v");
     const catererFilters = [
       {
@@ -38,6 +40,11 @@ exports.fetch_filters = async (req, res, next) => {
         filterType: "event",
         mainFilterName: null,
         filterValues: event,
+      },
+      {
+        filterType: "corporateEvent",
+        mainFilterName: null,
+        filterValues: corporateEvent,
       },
       {
         filterType: "dish",

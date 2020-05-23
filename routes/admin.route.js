@@ -14,6 +14,7 @@ module.exports = (app) => {
   const Cuisine = require("../models/Cuisine");
   const VendorType = require("../models/VendorType");
   const Event = require("../models/Event");
+  const CorporateEvent = require("../models/CorporateEvent");
   const Dish = require("../models/Dish");
   const ServiceableArea = require("../models/ServiceableArea");
   const GeneralCoupon = require("../models/GeneralCoupon");
@@ -100,6 +101,7 @@ module.exports = (app) => {
       { resource: Cuisine, options: { parent: filterParent } },
       { resource: VendorType, options: { parent: filterParent } },
       { resource: Event, options: { parent: filterParent } },
+      { resource: CorporateEvent, options: { parent: filterParent } },
       { resource: Dish, options: { parent: filterParent } },
       { resource: ServiceableArea, options: { parent: filterParent } },
       { resource: GeneralCoupon, options: { parent: couponParent } },
