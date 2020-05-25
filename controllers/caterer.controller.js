@@ -262,7 +262,7 @@ exports.caterers = async (req, res) => {
       query[operator] = [{ name: { $in: req.body.name } }];
     }
   }
-  console.log(query);
+  // console.log(query);
   await Caterer.find(query)
     .select("-email -phone")
     .populate(
