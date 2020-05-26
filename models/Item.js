@@ -32,8 +32,9 @@ let itemSchema = new Schema({
           dietary_restrictions: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "Dietary",
-            required: true,
+            required: false,
           },
+          minimumPlates: { type: Number, required: false },
           services: { type: Array, required: false, allowNull: true },
           price: { type: Number, required: true },
         },

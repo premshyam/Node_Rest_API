@@ -20,6 +20,7 @@ let menuSchema = new Schema({
     allowNull: true,
     default: null,
   },
+  minimumPlates: { type: Number, required: false },
   menuDetails: [
     {
       itemCategory: {
@@ -40,7 +41,7 @@ let menuSchema = new Schema({
           dietary_restrictions: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "Dietary",
-            required: true,
+            required: false,
           },
         },
       ],
