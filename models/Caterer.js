@@ -57,9 +57,9 @@ let catererSchema = new Schema({
   email: { type: String, required: true },
   password: { type: String, required: true, select: false },
   phone: { type: String, required: true },
-  minimum_order_value: { type: Number, required: true },
+  minimumOrderValue: { type: Number, required: true },
   // lead time is hours
-  lead_time: { type: Number, required: true },
+  leadTime: { type: Number, required: true },
   availability: { type: Boolean, required: true, default: false },
   ribbon: {
     type: mongoose.Schema.Types.ObjectId,
@@ -68,7 +68,7 @@ let catererSchema = new Schema({
     default: null,
   },
   menuStartingFrom: { type: Number, required: true },
-  delivery_fee: { type: Number, required: true },
+  deliveryFee: { type: Number, required: true },
   image: { type: String, required: true },
   rating: { type: Number, default: 0 },
   reviews: [

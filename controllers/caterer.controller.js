@@ -202,6 +202,10 @@ exports.caterers = async (req, res) => {
     // console.log(req.body);
     query["serviceableArea"] = req.body.location;
   }
+  if (req.body.leadTime) {
+    // console.log(req.body);
+    query["leadTime"] = { $lte: req.body.leadTime };
+  }
   if (req.body.cateringType) {
     if (query[operator]) {
       query[operator].push({ cateringType: { $in: req.body.cateringType } });
@@ -262,7 +266,7 @@ exports.caterers = async (req, res) => {
       query[operator] = [{ name: { $in: req.body.name } }];
     }
   }
-  // console.log(query);
+  console.log(query);
   await Caterer.find(query)
     .select("-email -phone")
     .populate(

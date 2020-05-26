@@ -4,7 +4,7 @@ const Schema = mongoose.Schema;
 mongoose.set("useFindAndModify", false);
 
 let itemSchema = new Schema({
-  caterer_id: {
+  catererId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Caterer",
     required: true,
@@ -19,17 +19,17 @@ let itemSchema = new Schema({
       },
       items: [
         {
-          item_name: { type: String, required: true },
-          item_description: { type: String, required: false },
-          item_image: { type: String, required: false },
-          spice_level: { type: Number, required: false },
+          itemName: { type: String, required: true },
+          itemDescription: { type: String, required: false },
+          itemImage: { type: String, required: false },
+          spiceLevel: { type: Number, required: false },
           ribbon: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "Ribbon",
             allowNull: true,
             default: null,
           },
-          dietary_restrictions: {
+          dietaryRestrictions: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "Dietary",
             required: false,

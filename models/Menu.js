@@ -4,7 +4,7 @@ const Schema = mongoose.Schema;
 mongoose.set("useFindAndModify", false);
 
 let menuSchema = new Schema({
-  caterer_id: {
+  catererId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Caterer",
     required: true,
@@ -37,8 +37,8 @@ let menuSchema = new Schema({
       items: [
         {
           name: { type: String, required: true },
-          spice_level: { type: Number, required: false },
-          dietary_restrictions: {
+          spiceLevel: { type: Number, required: false },
+          dietaryRestrictions: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "Dietary",
             required: false,
