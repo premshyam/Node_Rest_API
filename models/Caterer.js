@@ -131,5 +131,8 @@ catererSchema.statics.isCatererPhone = function (phone) {
     }
   });
 };
-
+catererSchema.index({
+  name: "text",
+  speciality: "text",
+});
 module.exports = mongoose.model("Caterer", catererSchema);

@@ -13,12 +13,18 @@ let menuSchema = new Schema({
   menuDescription: { type: String, required: true },
   image: { type: String, required: true },
   price: { type: Number, required: true },
+  perUnit: { type: String, required: true },
   services: { type: Array, required: false, allowNull: true },
   ribbon: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Ribbon",
     allowNull: true,
     default: null,
+  },
+  menuCategory: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "MenuCategory",
+    required: true,
   },
   minimumPlates: { type: Number, required: false },
   menuDetails: [

@@ -95,6 +95,8 @@ module.exports = (app) => {
     "/api/caterers",
     [
       body("location", "Invalid location").optional(),
+      body("leadTime", "Invalid location").optional(),
+      body("searchValue", "Invalid location").optional(),
       body("cateringType", "Invalid cateringType").optional(),
       body("dietary", "Invalid dietary").optional(),
       body("cuisine", "Invalid cuisine").optional(),

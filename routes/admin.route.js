@@ -9,6 +9,7 @@ module.exports = (app) => {
   const Menu = require("../models/Menu");
   const Item = require("../models/Item");
   const ItemCategory = require("../models/ItemCategory");
+  const MenuCategory = require("../models/MenuCategory");
   const Order = require("../models/Order");
   const CateringType = require("../models/CateringType");
   const Dietary = require("../models/Dietary");
@@ -97,6 +98,7 @@ module.exports = (app) => {
       Menu,
       Item,
       ItemCategory,
+      MenuCategory,
       Order,
       Otp,
       { resource: CateringType, options: { parent: filterParent } },

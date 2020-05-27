@@ -37,6 +37,7 @@ let itemSchema = new Schema({
           minimumPlates: { type: Number, required: false },
           services: { type: Array, required: false, allowNull: true },
           price: { type: Number, required: true },
+          perUnit: { type: String, required: true },
         },
       ],
     },
