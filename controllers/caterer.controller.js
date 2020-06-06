@@ -210,64 +210,55 @@ exports.caterers = async (req, res) => {
     // console.log(req.body);
     query["$text"] = { $search: req.body.searchValue };
   }
-  if (req.body.cateringType) {
+  if (req.body.cateringType && req.body.cateringType.length) {
     if (query[operator]) {
       query[operator].push({ cateringType: { $in: req.body.cateringType } });
     } else {
       query[operator] = [{ cateringType: { $in: req.body.cateringType } }];
     }
   }
-  if (req.body.dietary) {
+  if (req.body.dietary && req.body.dietary.length) {
     if (query[operator]) {
       query[operator].push({ dietaryRestrictions: { $in: req.body.dietary } });
     } else {
       query[operator] = [{ dietaryRestrictions: { $in: req.body.dietary } }];
     }
   }
-  if (req.body.cuisine) {
+  if (req.body.cuisine && req.body.cuisine.length) {
     if (query[operator]) {
       query[operator].push({ cuisineType: { $in: req.body.cuisine } });
     } else {
       query[operator] = [{ cuisineType: { $in: req.body.cuisine } }];
     }
   }
-  if (req.body.vendorType) {
+  if (req.body.vendorType && req.body.vendorType.length) {
     if (query[operator]) {
       query[operator].push({ vendorType: { $in: req.body.vendorType } });
     } else {
       query[operator] = [{ vendorType: { $in: req.body.vendorType } }];
     }
   }
-  if (req.body.event) {
+  if (req.body.event && req.body.event.length) {
     if (query[operator]) {
       query[operator].push({ event: { $in: req.body.event } });
     } else {
       query[operator] = [{ event: { $in: req.body.event } }];
     }
   }
-  if (req.body.dish) {
+  if (req.body.dish && req.body.dish.length) {
     if (query[operator]) {
       query[operator].push({ dish: { $in: req.body.dish } });
     } else {
       query[operator] = [{ dish: { $in: req.body.dish } }];
     }
   }
-  if (req.body.corporateEvent) {
+  if (req.body.corporateEvent && req.body.corporateEvent.length) {
     if (query[operator]) {
       query[operator].push({
         corporateEvent: { $in: req.body.corporateEvent },
       });
     } else {
       query[operator] = [{ corporateEvent: { $in: req.body.corporateEvent } }];
-    }
-  }
-  if (req.body.name) {
-    if (query[operator]) {
-      query[operator].push({
-        name: { $in: req.body.name },
-      });
-    } else {
-      query[operator] = [{ name: { $in: req.body.name } }];
     }
   }
   // console.log(query);
