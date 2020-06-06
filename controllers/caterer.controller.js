@@ -261,6 +261,15 @@ exports.caterers = async (req, res) => {
       query[operator] = [{ corporateEvent: { $in: req.body.corporateEvent } }];
     }
   }
+  if (req.body.ribbon && req.body.ribbon.length) {
+    if (query[operator]) {
+      query[operator].push({
+        ribbon: { $in: req.body.ribbon },
+      });
+    } else {
+      query[operator] = [{ ribbon: { $in: req.body.ribbon } }];
+    }
+  }
   // console.log(query);
   await Caterer.find(query)
     .select("-email -phone")

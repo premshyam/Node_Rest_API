@@ -40,17 +40,17 @@ exports.fetch_filters = async (req, res, next) => {
       },
       {
         filterType: "ribbon",
-        mainFilterName: null,
+        mainFilterName: "ribbon",
         filterValues: ribbon,
       },
       {
         filterType: "event",
-        mainFilterName: null,
+        mainFilterName: "event",
         filterValues: event,
       },
       {
         filterType: "corporateEvent",
-        mainFilterName: null,
+        mainFilterName: "corporateEvent",
         filterValues: corporateEvent,
       },
       {
