@@ -8,6 +8,7 @@ module.exports = (app) => {
   const Caterer = require("../models/Caterer");
   const Menu = require("../models/Menu");
   const Item = require("../models/Item");
+  const FoodCategoryItem = require("../models/FoodCategoryItem");
   const ItemCategory = require("../models/ItemCategory");
   const MenuCategory = require("../models/MenuCategory");
   const Order = require("../models/Order");
@@ -17,6 +18,7 @@ module.exports = (app) => {
   const VendorType = require("../models/VendorType");
   const Event = require("../models/Event");
   const CorporateEvent = require("../models/CorporateEvent");
+  const FoodCategory = require("../models/FoodCategory");
   const Dish = require("../models/Dish");
   const Ribbon = require("../models/Ribbon");
   const ServiceableArea = require("../models/ServiceableArea");
@@ -97,6 +99,7 @@ module.exports = (app) => {
       },
       Menu,
       Item,
+      FoodCategoryItem,
       ItemCategory,
       MenuCategory,
       Order,
@@ -109,6 +112,7 @@ module.exports = (app) => {
       { resource: CorporateEvent, options: { parent: filterParent } },
       { resource: Dish, options: { parent: filterParent } },
       { resource: Ribbon, options: { parent: filterParent } },
+      { resource: FoodCategory, options: { parent: filterParent } },
       { resource: ServiceableArea, options: { parent: filterParent } },
       { resource: GeneralCoupon, options: { parent: couponParent } },
       { resource: CatererCoupon, options: { parent: couponParent } },
