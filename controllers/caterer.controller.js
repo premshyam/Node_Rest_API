@@ -273,9 +273,11 @@ exports.caterers = async (req, res) => {
   // console.log(query);
   await Caterer.find(query)
     .select("-email -phone")
-    .populate(
-      "serviceableArea cateringType dietaryRestrictions cuisineType vendorType event"
-    )
+    .populate({
+      path:
+        "serviceableArea cateringType dietaryRestrictions cuisineType vendorType event ribbon",
+      skipInvalidIds: true,
+    })
     .then((result) => {
       res.json({
         message: result.length + " Caterers Found",
