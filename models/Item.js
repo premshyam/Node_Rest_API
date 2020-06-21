@@ -12,16 +12,16 @@ let itemSchema = new Schema({
 
   catererItems: [
     {
-      itemCategory: {
+      category: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "ItemCategory",
         required: true,
       },
       items: [
         {
-          itemName: { type: String, required: true },
-          itemDescription: { type: String, required: false },
-          itemImage: { type: String, required: false },
+          name: { type: String, required: true },
+          description: { type: String, required: false },
+          image: { type: String, required: false },
           spiceLevel: { type: Number, required: false },
           ribbon: {
             type: mongoose.Schema.Types.ObjectId,

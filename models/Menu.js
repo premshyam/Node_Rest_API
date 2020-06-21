@@ -9,46 +9,54 @@ let menuSchema = new Schema({
     ref: "Caterer",
     required: true,
   },
-  menuName: { type: String, required: true },
-  menuDescription: { type: String, required: true },
-  image: { type: String, required: false },
-  price: { type: Number, required: true },
-  perUnit: { type: String, required: true },
-  services: { type: Array, required: false, allowNull: true },
-  ribbon: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Ribbon",
-    allowNull: true,
-    default: null,
-  },
-  menuCategory: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "MenuCategory",
-    required: true,
-  },
-  minimumPlates: { type: Number, required: false },
-  menuDetails: [
+  catererMenus: [
     {
-      itemCategory: {
+      category: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "ItemCategory",
+        ref: "MenuCategory",
         required: true,
       },
-      selectionLimit: {
-        type: Number,
-        required: false,
-        allowNull: true,
-        default: null,
-      },
-      items: [
+      menus: [
         {
           name: { type: String, required: true },
-          spiceLevel: { type: Number, required: false },
-          dietaryRestrictions: {
+          description: { type: String, required: true },
+          image: { type: String, required: false },
+          price: { type: Number, required: true },
+          perUnit: { type: String, required: true },
+          services: { type: Array, required: false, allowNull: true },
+          ribbon: {
             type: mongoose.Schema.Types.ObjectId,
-            ref: "Dietary",
-            required: false,
+            ref: "Ribbon",
+            allowNull: true,
+            default: null,
           },
+          minimumPlates: { type: Number, required: false },
+          menuDetails: [
+            {
+              itemCategory: {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: "ItemCategory",
+                required: true,
+              },
+              selectionLimit: {
+                type: Number,
+                required: false,
+                allowNull: true,
+                default: null,
+              },
+              items: [
+                {
+                  name: { type: String, required: true },
+                  spiceLevel: { type: Number, required: false },
+                  dietaryRestrictions: {
+                    type: mongoose.Schema.Types.ObjectId,
+                    ref: "Dietary",
+                    required: false,
+                  },
+                },
+              ],
+            },
+          ],
         },
       ],
     },
