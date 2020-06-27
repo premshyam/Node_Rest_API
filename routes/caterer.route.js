@@ -70,8 +70,11 @@ module.exports = (app) => {
   );
 
   // caterer Details
+  app.get("/api/caterer_details", caterer_controller.caterer_details);
+
+  // caterer info
   app.get(
-    "/api/caterer_details/",
+    "/api/caterer_info/",
     //Authentication middleware
     isAuth,
     [
@@ -87,7 +90,7 @@ module.exports = (app) => {
         });
       }),
     ],
-    caterer_controller.caterer_details
+    caterer_controller.caterer_info
   );
 
   // All caterers

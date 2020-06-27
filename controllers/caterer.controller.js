@@ -1,6 +1,8 @@
 const HttpStatus = require("http-status-codes");
 //import Caterer model
 const Caterer = require("../models/Caterer");
+const Menu = require("../models/Menu");
+const Item = require("../models/Item");
 //jsonwebtokens module for generating auth tokens
 const jwt = require("jsonwebtoken");
 // module to upload images to the cloudinary
@@ -165,7 +167,79 @@ exports.caterer_details = async (req, res) => {
       errors: errors.array(),
     });
   }
-  await Caterer.findOne({ _id: req.body.userId })
+  try {
+    console.log(req.query.location, req.query.catererName);
+    let caterer = await Caterer.findOne({ name: req.query.catererName })
+      .select("-email")
+      .populate({
+        path:
+          "serviceableArea cateringType dietaryRestrictions cuisineType vendorType event ribbon",
+        skipInvalidIds: true,
+      });
+    const result = [];
+    let menus = await Menu.find({ catererId: caterer._id }).populate({
+      path: "catererMenus.category",
+      skipInvalidIds: true,
+    });
+    let items = await Item.find({ catererId: caterer._id }).populate({
+      path: "catererItems.category",
+      skipInvalidIds: true,
+    });
+    menus = await menus[0].catererMenus.map((menu) => {
+      console.log(menu);
+      return { items: menu.menus, category: menu.category.Category };
+    });
+    items = await items[0].catererItems.map((item) => {
+      console.log(item);
+      return { items: item.items, category: item.category.Category };
+    });
+    // result.push(items);
+    // result.push(menus);
+    // console.log(items);
+    res.json({
+      message: "Caterer Found",
+      reviews: caterer.reviews,
+      // menus: menus, //[0].catererMenus,
+      items: menus.concat(items), //[0].catererItems,
+    });
+  } catch (err) {
+    res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
+      message: "Something went wrong",
+      errors: err,
+    });
+  }
+  // await Caterer.findOne({ _id: req.params.id })
+  //   .then((result) => {
+  //     if (result) {
+  //       res.json({
+  //         message: "Caterer Found",
+  //         caterer: items,
+  //       });
+  //     } else {
+  //       res.status(HttpStatus.BAD_REQUEST).json({
+  //         message: "Caterer Not Found",
+  //         errors: [],
+  //       });
+  //     }
+  //   })
+  //   .catch((err) => {
+  //     res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
+  //       message: "Something went wrong",
+  //       errors: err,
+  //     });
+  //   });
+};
+
+// Caterer info
+exports.caterer_info = async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(HttpStatus.UNPROCESSABLE_ENTITY).json({
+      message: "Server side validation failed",
+      errors: errors.array(),
+    });
+  }
+  await Caterer.findOne({ _id: req.params.id })
     .then((result) => {
       if (result) {
         res.json({

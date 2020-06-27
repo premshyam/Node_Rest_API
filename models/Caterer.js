@@ -73,9 +73,10 @@ let catererSchema = new Schema({
   rating: { type: Number, default: 0 },
   reviews: [
     {
+      rating: { type: Number, required: true },
       name: { type: String, required: true },
-      text: { type: String, required: true },
-      Date: { type: Date, required: true },
+      comment: { type: String, required: true },
+      ratingTime: { type: Date, required: true },
     },
   ],
 });
