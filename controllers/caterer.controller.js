@@ -3,6 +3,7 @@ const HttpStatus = require("http-status-codes");
 const Caterer = require("../models/Caterer");
 const Menu = require("../models/Menu");
 const Item = require("../models/Item");
+const ServiceableArea = require("../models/ServiceableArea");
 //jsonwebtokens module for generating auth tokens
 const jwt = require("jsonwebtoken");
 // module to upload images to the cloudinary
@@ -160,13 +161,13 @@ exports.login = async (req, res) => {
 
 // Caterer Details
 exports.caterer_details = async (req, res) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return res.status(HttpStatus.UNPROCESSABLE_ENTITY).json({
-      message: "Server side validation failed",
-      errors: errors.array(),
-    });
-  }
+  // const errors = validationResult(req);
+  // if (!errors.isEmpty()) {
+  //   return res.status(HttpStatus.UNPROCESSABLE_ENTITY).json({
+  //     message: "Server side validation failed",
+  //     errors: errors.array(),
+  //   });
+  // }
   try {
     console.log(req.query.location, req.query.catererName);
     let caterer = await Caterer.findOne({ name: req.query.catererName })
@@ -270,19 +271,30 @@ exports.caterers = async (req, res) => {
       errors: errors.array(),
     });
   }
+  console.log(req.query);
   let query = { availability: true };
   const operator = "$and";
-  if (req.body.location) {
+  if (req.query.location) {
     // console.log(req.body);
-    query["serviceableArea"] = req.body.location;
+    query["serviceableArea"] = await ServiceableArea.find({
+      serviceableArea: req.query.location,
+    }).then((result) => {
+      if (result.length) {
+        //
+        // console.log(result[0]);
+        return result[0]._id.toString();
+      } else {
+        return null;
+      }
+    });
   }
-  if (req.body.leadTime) {
+  if (req.query.leadTime) {
     // console.log(req.body);
-    query["leadTime"] = { $lte: req.body.leadTime };
+    query["leadTime"] = { $lte: req.query.leadTime };
   }
-  if (req.body.searchValue) {
+  if (req.query.searchValue) {
     // console.log(req.body);
-    query["$text"] = { $search: req.body.searchValue };
+    query["$text"] = { $search: req.query.searchValue };
   }
   if (req.body.cateringType && req.body.cateringType.length) {
     if (query[operator]) {

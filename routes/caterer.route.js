@@ -2,45 +2,45 @@ module.exports = (app) => {
   const caterer_controller = require("../controllers/caterer.controller");
   const upload = require("../config/caterer_image.config.js");
   const Caterer = require("../models/Caterer");
-  const { body, check } = require("express-validator");
+  const { query, check, body } = require("express-validator");
   const isAuth = require("../middleware/is-auth");
   // caterer Registration
   app.post(
     "/api/caterer_signup",
 
     upload.single("image"),
-    //validators for request body fields
+    //validators for request query fields
     [
-      body("name", "Invalid name, enter 1 to 15 characters only")
+      query("name", "Invalid name, enter 1 to 15 characters only")
         .trim()
         .isLength({ min: 1, max: 15 }),
-      body("email", "Enter valid email").isEmail(),
-      body("description", "Invalid Description, enter 1 to 300 characters")
+      query("email", "Enter valid email").isEmail(),
+      query("description", "Invalid Description, enter 1 to 300 characters")
         .trim()
         .isLength({ min: 1, max: 300 }),
-      body(
+      query(
         "password",
         "Password should be combination of one uppercase , one lower case, one special char, one digit and min 8 , max 15 char long"
       ).matches(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9]).{8,}$/, "i"),
-      body("phone", "Enter a valid phone number")
+      query("phone", "Enter a valid phone number")
         .isMobilePhone()
         .isLength({ min: 10, max: 10 }),
-      body(
+      query(
         "minimum_order_quantity",
         "Enter a valid number for minimum order quantity"
       ).isInt({ gt: 0 }),
-      body("availability", "Enter a boolean value").isBoolean(),
-      body("live_kitchen", "Enter a boolean value").isBoolean(),
-      body("delivery_fee", "Enter a valid amount for delivery fee").isInt({
+      query("availability", "Enter a boolean value").isBoolean(),
+      query("live_kitchen", "Enter a boolean value").isBoolean(),
+      query("delivery_fee", "Enter a valid amount for delivery fee").isInt({
         gt: 0,
       }),
-      body(
+      query(
         "lead_time",
         "Enter a valid number of hours for lead time, it should be more than 24"
       ).isInt({
         gt: 24,
       }),
-      body("menu_starting_from", "Enter a valid amount").isInt({ gt: 0 }),
+      query("menu_starting_from", "Enter a valid amount").isInt({ gt: 0 }),
     ],
     caterer_controller.signup
   );
@@ -49,19 +49,19 @@ module.exports = (app) => {
   app.post(
     "/api/caterer_login",
     [
-      body("phone", "Enter a valid registered phone number")
-        .if(body("phone").exists())
+      query("phone", "Enter a valid registered phone number")
+        .if(query("phone").exists())
         .isMobilePhone()
         .isLength({ min: 10, max: 10 })
         .custom((email) => {
           return Caterer.isCatererPhone(email);
         }),
-      body(
+      query(
         "password",
         "Password should be combination of one uppercase , one lower case, one special char, one digit and min 8 , max 15 char long"
       ).matches(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9]).{8,}$/, "i"),
-      body("email", "Enter valid registered email")
-        .if(body("email").exists())
+      query("email", "Enter valid registered email")
+        .if(query("email").exists())
         .custom((email) => {
           return Caterer.isCatererEmail(email);
         }),
@@ -72,13 +72,32 @@ module.exports = (app) => {
   // caterer Details
   app.get("/api/caterer_details", caterer_controller.caterer_details);
 
+  // All caterers
+  app.post(
+    "/api/caterers",
+    [
+      query("location", "Invalid location").optional(),
+      query("leadTime", "Invalid location").optional(),
+      query("searchValue", "Invalid location").optional(),
+      body("cateringType", "Invalid cateringType").optional(),
+      body("dietary", "Invalid dietary").optional(),
+      body("cuisine", "Invalid cuisine").optional(),
+      body("vendorType", "Invalid vendorType").optional(),
+      body("event", "Invalid event").optional(),
+      body("dish", "Invalid dish").optional(),
+      body("corporateEvent", "Invalid corporateEvent").optional(),
+      query("ribbon", "Invalid name").optional(),
+    ],
+    caterer_controller.caterers
+  );
+
   // caterer info
   app.get(
     "/api/caterer_info/",
     //Authentication middleware
     isAuth,
     [
-      body("userId", "not a vaild caterer").custom((catererId) => {
+      query("userId", "not a vaild caterer").custom((catererId) => {
         return Caterer.findById(catererId).then((result) => {
           if (result) {
             //
@@ -93,25 +112,6 @@ module.exports = (app) => {
     caterer_controller.caterer_info
   );
 
-  // All caterers
-  app.post(
-    "/api/caterers",
-    [
-      body("location", "Invalid location").optional(),
-      body("leadTime", "Invalid location").optional(),
-      body("searchValue", "Invalid location").optional(),
-      body("cateringType", "Invalid cateringType").optional(),
-      body("dietary", "Invalid dietary").optional(),
-      body("cuisine", "Invalid cuisine").optional(),
-      body("vendorType", "Invalid vendorType").optional(),
-      body("event", "Invalid event").optional(),
-      body("dish", "Invalid dish").optional(),
-      body("corporateEvent", "Invalid corporateEvent").optional(),
-      body("name", "Invalid name").optional(),
-    ],
-    caterer_controller.caterers
-  );
-
   // Update caterer
   app.put(
     "/api/update_caterer/",
@@ -120,15 +120,15 @@ module.exports = (app) => {
     isAuth,
     //Caterer field validations
     [
-      body("name", "Invalid name, enter 1 to 15 characters only")
+      query("name", "Invalid name, enter 1 to 15 characters only")
         .optional()
         .trim()
         .isLength({ min: 1, max: 15 }),
-      body("description", "Invalid Description, enter 1 to 50 characters")
+      query("description", "Invalid Description, enter 1 to 50 characters")
         .optional()
         .trim()
         .isLength({ min: 1, max: 50 }),
-      body(
+      query(
         "password",
         "Password should be combination of one uppercase , one lower case, one special char, one digit and min 8 , max 15 char long"
       )
@@ -137,8 +137,8 @@ module.exports = (app) => {
           /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9]).{8,}$/,
           "i"
         ),
-      body("email", "Enter valid email").optional().isEmail(),
-      body("phone", "Enter a valid phone number")
+      query("email", "Enter valid email").optional().isEmail(),
+      query("phone", "Enter a valid phone number")
         .optional()
         .isMobilePhone()
         .isLength({ min: 10, max: 10 }),
