@@ -161,48 +161,63 @@ exports.login = async (req, res) => {
 
 // Caterer Details
 exports.caterer_details = async (req, res) => {
-  // const errors = validationResult(req);
-  // if (!errors.isEmpty()) {
-  //   return res.status(HttpStatus.UNPROCESSABLE_ENTITY).json({
-  //     message: "Server side validation failed",
-  //     errors: errors.array(),
-  //   });
-  // }
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(HttpStatus.UNPROCESSABLE_ENTITY).json({
+      message: "Server side validation failed",
+      errors: errors.array(),
+    });
+  }
   try {
     console.log(req.query.location, req.query.catererName);
-    let caterer = await Caterer.findOne({ name: req.query.catererName })
+    let caterer = await Caterer.findOne({
+      name: {
+        $regex: new RegExp(req.query.catererName.replace("-", " "), "i"),
+      },
+    })
       .select("-email")
       .populate({
         path:
           "serviceableArea cateringType dietaryRestrictions cuisineType vendorType event ribbon",
         skipInvalidIds: true,
       });
-    const result = [];
-    let menus = await Menu.find({ catererId: caterer._id }).populate({
-      path: "catererMenus.category",
-      skipInvalidIds: true,
-    });
-    let items = await Item.find({ catererId: caterer._id }).populate({
-      path: "catererItems.category",
-      skipInvalidIds: true,
-    });
-    menus = await menus[0].catererMenus.map((menu) => {
-      console.log(menu);
-      return { items: menu.menus, category: menu.category.Category };
-    });
-    items = await items[0].catererItems.map((item) => {
-      console.log(item);
-      return { items: item.items, category: item.category.Category };
-    });
-    // result.push(items);
-    // result.push(menus);
-    // console.log(items);
-    res.json({
-      message: "Caterer Found",
-      reviews: caterer.reviews,
-      // menus: menus, //[0].catererMenus,
-      items: menus.concat(items), //[0].catererItems,
-    });
+    // console.log(caterer);
+    if (caterer) {
+      const result = [];
+      let menus = await Menu.find({ catererId: caterer._id }).populate({
+        path: "catererMenus.category",
+        skipInvalidIds: true,
+      });
+      let items = await Item.find({ catererId: caterer._id }).populate({
+        path: "catererItems.category",
+        skipInvalidIds: true,
+      });
+      menus = await menus[0].catererMenus.map((menu) => {
+        // console.log(menu);
+        return { items: menu.menus, category: menu.category.Category };
+      });
+      items = await items[0].catererItems.map((item) => {
+        // console.log(item);
+        return { items: item.items, category: item.category.Category };
+      });
+      // result.push(items);
+      // result.push(menus);
+      // console.log(items);
+      res.json({
+        message: "Caterer Found",
+        reviews: caterer.reviews,
+        caterer: caterer,
+        // menus: menus, //[0].catererMenus,
+        items: menus.concat(items), //[0].catererItems,
+      });
+    } else {
+      res.json({
+        message: "Caterer Not Found",
+        reviews: [],
+        caterer: {},
+        items: [],
+      });
+    }
   } catch (err) {
     res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
       message: "Something went wrong",
@@ -277,7 +292,9 @@ exports.caterers = async (req, res) => {
   if (req.query.location) {
     // console.log(req.body);
     query["serviceableArea"] = await ServiceableArea.find({
-      serviceableArea: req.query.location,
+      serviceableArea: {
+        $regex: new RegExp(req.query.location.replace("-", " "), "i"),
+      },
     }).then((result) => {
       if (result.length) {
         //

@@ -70,15 +70,22 @@ module.exports = (app) => {
   );
 
   // caterer Details
-  app.get("/api/caterer_details", caterer_controller.caterer_details);
+  app.get(
+    "/api/caterer_details",
+    [
+      query("location", "Invalid location").exists(),
+      query("catererName", "Invalid name").exists(),
+    ],
+    caterer_controller.caterer_details
+  );
 
   // All caterers
   app.post(
     "/api/caterers",
     [
       query("location", "Invalid location").optional(),
-      query("leadTime", "Invalid location").optional(),
-      query("searchValue", "Invalid location").optional(),
+      query("leadTime", "Invalid Time").optional(),
+      query("searchValue", "Invalid value").optional(),
       body("cateringType", "Invalid cateringType").optional(),
       body("dietary", "Invalid dietary").optional(),
       body("cuisine", "Invalid cuisine").optional(),
