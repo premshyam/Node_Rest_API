@@ -170,9 +170,11 @@ exports.caterer_details = async (req, res) => {
   }
   try {
     console.log(req.query.location, req.query.catererName);
+    let regex = new RegExp(req.query.catererName.replace("-", " "), "i");
+    // console.log(regex);
     let caterer = await Caterer.findOne({
       name: {
-        $regex: new RegExp(req.query.catererName.replace("-", " "), "i"),
+        $regex: regex,
       },
     })
       .select("-email")
@@ -188,18 +190,24 @@ exports.caterer_details = async (req, res) => {
         path: "catererMenus.category",
         skipInvalidIds: true,
       });
+      console.log(menus);
       let items = await Item.find({ catererId: caterer._id }).populate({
         path: "catererItems.category",
         skipInvalidIds: true,
       });
-      menus = await menus[0].catererMenus.map((menu) => {
-        // console.log(menu);
-        return { items: menu.menus, category: menu.category.Category };
-      });
-      items = await items[0].catererItems.map((item) => {
-        // console.log(item);
-        return { items: item.items, category: item.category.Category };
-      });
+      console.log(items);
+      if (menus.length) {
+        menus = await menus[0].catererMenus.map((menu) => {
+          // console.log(menu);
+          return { items: menu.menus, category: menu.category.Category };
+        });
+      }
+      if (menus.length) {
+        items = await items[0].catererItems.map((item) => {
+          // console.log(item);
+          return { items: item.items, category: item.category.Category };
+        });
+      }
       // result.push(items);
       // result.push(menus);
       // console.log(items);
