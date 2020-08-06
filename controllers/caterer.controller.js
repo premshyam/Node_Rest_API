@@ -203,7 +203,7 @@ exports.caterer_details = async (req, res) => {
           return { items: menu.menus, category: menu.category.Category };
         });
       }
-      if (menus.length) {
+      if (items.length) {
         items = await items[0].catererItems.map((item) => {
           // console.log(item);
           return { items: item.items, category: item.category.Category };
