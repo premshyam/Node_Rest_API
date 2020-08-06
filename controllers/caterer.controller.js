@@ -170,7 +170,7 @@ exports.caterer_details = async (req, res) => {
   }
   try {
     console.log(req.query.location, req.query.catererName);
-    let regex = new RegExp(req.query.catererName.replace("-", " "), "i");
+    let regex = new RegExp(req.query.catererName.replace(/-/g, " "), "i");
     // console.log(regex);
     let caterer = await Caterer.findOne({
       name: {
@@ -187,7 +187,8 @@ exports.caterer_details = async (req, res) => {
     if (caterer) {
       const result = [];
       let menus = await Menu.find({ catererId: caterer._id }).populate({
-        path: "catererMenus.category",
+        path:
+          "catererMenus.category catererMenus.menus.menuDetails.itemCategory",
         skipInvalidIds: true,
       });
       console.log(menus);
@@ -301,7 +302,7 @@ exports.caterers = async (req, res) => {
     // console.log(req.body);
     query["serviceableArea"] = await ServiceableArea.find({
       serviceableArea: {
-        $regex: new RegExp(req.query.location.replace("-", " "), "i"),
+        $regex: new RegExp(req.query.location.replace(/-/g, " "), "i"),
       },
     }).then((result) => {
       if (result.length) {
