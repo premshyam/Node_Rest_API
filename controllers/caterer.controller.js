@@ -188,12 +188,12 @@ exports.caterer_details = async (req, res) => {
       const result = [];
       let menus = await Menu.find({ catererId: caterer._id }).populate({
         path:
-          "catererMenus.category catererMenus.menus.menuDetails.itemCategory",
+          "catererMenus.category catererMenus.menus.menuDetails.itemCategory catererMenus.menus.ribbon",
         skipInvalidIds: true,
       });
       console.log(menus);
       let items = await Item.find({ catererId: caterer._id }).populate({
-        path: "catererItems.category",
+        path: "catererItems.category catererItems.items.ribbon",
         skipInvalidIds: true,
       });
       console.log(items);

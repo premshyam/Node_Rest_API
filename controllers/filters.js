@@ -39,7 +39,7 @@ exports.fetch_filters = async (req, res, next) => {
         filterValues: vendorType,
       },
       {
-        filterType: "ribbon",
+        filterType: "general",
         mainFilterName: "ribbon",
         filterValues: ribbon,
       },
