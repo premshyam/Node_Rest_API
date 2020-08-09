@@ -6,7 +6,7 @@ mongoose.set("useFindAndModify", false);
 let cartSchema = new Schema({
   customer: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "Customers",
+    ref: "Customer",
     required: true,
   },
   caterer: {

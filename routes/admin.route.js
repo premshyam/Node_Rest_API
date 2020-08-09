@@ -5,6 +5,7 @@ module.exports = (app) => {
   const AdminBroMongoose = require("admin-bro-mongoose");
   AdminBro.registerAdapter(AdminBroMongoose);
   const Customer = require("../models/Customer");
+  const Cart = require("../models/Cart");
   const Caterer = require("../models/Caterer");
   const Menu = require("../models/Menu");
   const Item = require("../models/Item");
@@ -102,6 +103,7 @@ module.exports = (app) => {
       FoodCategoryItem,
       ItemCategory,
       MenuCategory,
+      Cart,
       Order,
       Otp,
       { resource: CateringType, options: { parent: filterParent } },
