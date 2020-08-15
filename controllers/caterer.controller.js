@@ -295,14 +295,13 @@ exports.caterers = async (req, res) => {
       errors: errors.array(),
     });
   }
-  console.log(req.query);
+  console.log(req.body);
   let query = { availability: true };
   const operator = "$and";
-  if (req.query.location) {
-    // console.log(req.body);
+  if (req.body.location) {
     query["serviceableArea"] = await ServiceableArea.find({
       serviceableArea: {
-        $regex: new RegExp(req.query.location.replace(/-/g, " "), "i"),
+        $regex: new RegExp(req.body.location.replace(/-/g, " "), "i"),
       },
     }).then((result) => {
       if (result.length) {
@@ -314,13 +313,13 @@ exports.caterers = async (req, res) => {
       }
     });
   }
-  if (req.query.leadTime) {
+  if (req.body.leadTime) {
     // console.log(req.body);
-    query["leadTime"] = { $lte: req.query.leadTime };
+    query["leadTime"] = { $lte: req.body.leadTime };
   }
-  if (req.query.searchValue) {
+  if (req.body.searchValue) {
     // console.log(req.body);
-    query["$text"] = { $search: req.query.searchValue };
+    query["$text"] = { $search: req.body.searchValue };
   }
   if (req.body.cateringType && req.body.cateringType.length) {
     if (query[operator]) {

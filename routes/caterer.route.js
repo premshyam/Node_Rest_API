@@ -83,9 +83,9 @@ module.exports = (app) => {
   app.post(
     "/api/caterers",
     [
-      query("location", "Invalid location").optional(),
-      query("leadTime", "Invalid Time").optional(),
-      query("searchValue", "Invalid value").optional(),
+      body("location", "Invalid location").optional(),
+      body("leadTime", "Invalid Time").optional(),
+      body("searchValue", "Invalid value").optional(),
       body("cateringType", "Invalid cateringType").optional(),
       body("dietary", "Invalid dietary").optional(),
       body("cuisine", "Invalid cuisine").optional(),
