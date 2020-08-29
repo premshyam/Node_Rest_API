@@ -6,11 +6,11 @@ const { validationResult } = require("express-validator");
 // Customer Cart Items
 exports.getCart = async (req, res) => {
   await Cart.findOne({ customer: req.body.userId })
-    .then((result) => {
-      if (result) {
+    .then((cartObj) => {
+      if (cartObj) {
         res.json({
-          message: "Cart Items Found",
-          cart: result,
+          message: "Cart Found",
+          shoppingCart: cartObj.shoppingCart,
         });
       } else {
         res.status(HttpStatus.UNPROCESSABLE_ENTITY).json({
@@ -32,8 +32,7 @@ exports.updateCart = async (req, res) => {
   await Cart.findOne({ customer: req.body.userId })
     .then((cartObj) => {
       if (cartObj) {
-        cartObj.caterer = req.body.caterer;
-        cartObj.cartItems = req.body.cartItems;
+        cartObj.shoppingCart = req.body.shoppingCart;
         return cartObj.save();
       } else {
         res.status(HttpStatus.UNPROCESSABLE_ENTITY).json({
@@ -45,7 +44,7 @@ exports.updateCart = async (req, res) => {
     .then((cartObj) => {
       res.json({
         message: "Cart updated",
-        cart: cartObj,
+        shoppingCart: cartObj.shoppingCart,
       });
     })
     .catch((err) => {
