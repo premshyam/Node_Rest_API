@@ -23,6 +23,7 @@ module.exports = (app) => {
   const Dish = require("../models/Dish");
   const Ribbon = require("../models/Ribbon");
   const ServiceableArea = require("../models/ServiceableArea");
+  const Service = require("../models/Service");
   const GeneralCoupon = require("../models/GeneralCoupon");
   const CatererCoupon = require("../models/CatererCoupon");
   const Otp = require("../models/Otp");
@@ -116,6 +117,7 @@ module.exports = (app) => {
       { resource: Ribbon, options: { parent: filterParent } },
       { resource: FoodCategory, options: { parent: filterParent } },
       { resource: ServiceableArea, options: { parent: filterParent } },
+      { resource: Service, options: { parent: filterParent } },
       { resource: GeneralCoupon, options: { parent: couponParent } },
       { resource: CatererCoupon, options: { parent: couponParent } },
     ],
