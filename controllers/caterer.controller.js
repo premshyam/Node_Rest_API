@@ -169,7 +169,7 @@ exports.caterer_details = async (req, res) => {
     });
   }
   try {
-    console.log(req.query.location, req.query.catererName);
+    // console.log(req.query.location, req.query.catererName);
     let regex = new RegExp(req.query.catererName.replace(/-/g, " "), "i");
     // console.log(regex);
     let caterer = await Caterer.findOne({
@@ -180,7 +180,7 @@ exports.caterer_details = async (req, res) => {
       .select("-email")
       .populate({
         path:
-          "serviceableArea cateringType dietaryRestrictions cuisineType vendorType event ribbon",
+          "serviceableArea cateringType dietaryRestrictions cuisineType vendorType event ribbon service",
         skipInvalidIds: true,
       });
     // console.log(caterer);
@@ -191,7 +191,7 @@ exports.caterer_details = async (req, res) => {
           "catererMenus.category catererMenus.menus.menuDetails.itemCategory catererMenus.menus.ribbon",
         skipInvalidIds: true,
       });
-      console.log(menus);
+      // console.log(menus);
       let items = await Item.find({ catererId: caterer._id }).populate({
         path: "catererItems.category catererItems.items.ribbon",
         skipInvalidIds: true,
