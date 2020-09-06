@@ -5,6 +5,7 @@ const VendorType = require("../models/VendorType");
 const Event = require("../models/Event");
 const CorporateEvent = require("../models/CorporateEvent");
 const Dish = require("../models/Dish");
+const Service = require("../models/Service");
 const Ribbon = require("../models/Ribbon");
 
 exports.fetch_filters = async (req, res, next) => {
@@ -16,6 +17,7 @@ exports.fetch_filters = async (req, res, next) => {
     const event = await Event.find().select("-__v");
     const corporateEvent = await CorporateEvent.find().select("-__v");
     const dish = await Dish.find().select("-__v");
+    const service = await Service.find().select("-__v");
     const ribbon = await Ribbon.find().select("-__v");
     const catererFilters = [
       {
@@ -44,6 +46,16 @@ exports.fetch_filters = async (req, res, next) => {
         filterValues: ribbon,
       },
       {
+        filterType: "general",
+        mainFilterName: "dish",
+        filterValues: dish,
+      },
+      {
+        filterType: "general",
+        mainFilterName: "service",
+        filterValues: service,
+      },
+      {
         filterType: "event",
         mainFilterName: "event",
         filterValues: event,
@@ -52,11 +64,6 @@ exports.fetch_filters = async (req, res, next) => {
         filterType: "corporateEvent",
         mainFilterName: "corporateEvent",
         filterValues: corporateEvent,
-      },
-      {
-        filterType: "dish",
-        mainFilterName: null,
-        filterValues: dish,
       },
     ];
     res.json({
