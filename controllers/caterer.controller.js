@@ -4,6 +4,7 @@ const Caterer = require("../models/Caterer");
 const Menu = require("../models/Menu");
 const Item = require("../models/Item");
 const ServiceableArea = require("../models/ServiceableArea");
+const Event = require("../models/Event");
 //jsonwebtokens module for generating auth tokens
 const jwt = require("jsonwebtoken");
 // module to upload images to the cloudinary
@@ -353,6 +354,136 @@ exports.caterers = async (req, res) => {
       query[operator].push({ event: { $in: req.body.event } });
     } else {
       query[operator] = [{ event: { $in: req.body.event } }];
+    }
+  }
+  if (req.body.dish && req.body.dish.length) {
+    if (query[operator]) {
+      query[operator].push({ dish: { $in: req.body.dish } });
+    } else {
+      query[operator] = [{ dish: { $in: req.body.dish } }];
+    }
+  }
+  if (req.body.corporateEvent && req.body.corporateEvent.length) {
+    if (query[operator]) {
+      query[operator].push({
+        corporateEvent: { $in: req.body.corporateEvent },
+      });
+    } else {
+      query[operator] = [{ corporateEvent: { $in: req.body.corporateEvent } }];
+    }
+  }
+  if (req.body.ribbon && req.body.ribbon.length) {
+    if (query[operator]) {
+      query[operator].push({
+        ribbon: { $in: req.body.ribbon },
+      });
+    } else {
+      query[operator] = [{ ribbon: { $in: req.body.ribbon } }];
+    }
+  }
+  // console.log(query);
+  await Caterer.find(query)
+    .select("-email -phone")
+    .populate({
+      path:
+        "serviceableArea cateringType dietaryRestrictions cuisineType vendorType event ribbon",
+      skipInvalidIds: true,
+    })
+    .then((result) => {
+      res.json({
+        message: result.length + " Caterers Found",
+        caterer: result,
+      });
+    })
+    .catch((err) => {
+      res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
+        message: "Something went wrong",
+        errors: err,
+      });
+    });
+};
+
+// Fetch All Caterers
+exports.eventSpecificCaterers = async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(HttpStatus.UNPROCESSABLE_ENTITY).json({
+      message: "Server side validation failed",
+      errors: errors.array(),
+    });
+  }
+  console.log(req.body);
+  let query = { availability: true };
+  const operator = "$and";
+  if (req.body.location) {
+    query["serviceableArea"] = await ServiceableArea.find({
+      serviceableArea: {
+        $regex: new RegExp(req.body.location.replace(/-/g, " "), "i"),
+      },
+    }).then((result) => {
+      if (result.length) {
+        //
+        // console.log(result[0]);
+        return result[0]._id.toString();
+      } else {
+        return null;
+      }
+    });
+  }
+  if (req.body.event) {
+    query["event"] = await Event.find({
+      filterName: {
+        $regex: new RegExp(req.body.event.replace(/-/g, " "), "i"),
+      },
+    }).then((result) => {
+      if (result.length) {
+        //
+        // console.log(result[0]);
+        return result[0]._id.toString();
+      } else {
+        return null;
+      }
+    });
+    // if (query[operator]) {
+    //   query[operator].push({ event: { $in: req.body.event } });
+    // } else {
+    //   query[operator] = [{ event: { $in: req.body.event } }];
+    // }
+  }
+  if (req.body.leadTime) {
+    // console.log(req.body);
+    query["leadTime"] = { $lte: req.body.leadTime };
+  }
+  if (req.body.searchValue) {
+    // console.log(req.body);
+    query["$text"] = { $search: req.body.searchValue };
+  }
+  if (req.body.cateringType && req.body.cateringType.length) {
+    if (query[operator]) {
+      query[operator].push({ cateringType: { $in: req.body.cateringType } });
+    } else {
+      query[operator] = [{ cateringType: { $in: req.body.cateringType } }];
+    }
+  }
+  if (req.body.dietary && req.body.dietary.length) {
+    if (query[operator]) {
+      query[operator].push({ dietaryRestrictions: { $in: req.body.dietary } });
+    } else {
+      query[operator] = [{ dietaryRestrictions: { $in: req.body.dietary } }];
+    }
+  }
+  if (req.body.cuisine && req.body.cuisine.length) {
+    if (query[operator]) {
+      query[operator].push({ cuisineType: { $in: req.body.cuisine } });
+    } else {
+      query[operator] = [{ cuisineType: { $in: req.body.cuisine } }];
+    }
+  }
+  if (req.body.vendorType && req.body.vendorType.length) {
+    if (query[operator]) {
+      query[operator].push({ vendorType: { $in: req.body.vendorType } });
+    } else {
+      query[operator] = [{ vendorType: { $in: req.body.vendorType } }];
     }
   }
   if (req.body.dish && req.body.dish.length) {

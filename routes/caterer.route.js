@@ -93,9 +93,28 @@ module.exports = (app) => {
       body("event", "Invalid event").optional(),
       body("dish", "Invalid dish").optional(),
       body("corporateEvent", "Invalid corporateEvent").optional(),
-      query("ribbon", "Invalid name").optional(),
+      body("ribbon", "Invalid name").optional(),
     ],
     caterer_controller.caterers
+  );
+
+  // Event Specific caterers
+  app.post(
+    "/api/caterers/events",
+    [
+      body("location", "Invalid location").optional(),
+      body("leadTime", "Invalid Time").optional(),
+      body("searchValue", "Invalid value").optional(),
+      body("cateringType", "Invalid cateringType").optional(),
+      body("dietary", "Invalid dietary").optional(),
+      body("cuisine", "Invalid cuisine").optional(),
+      body("vendorType", "Invalid vendorType").optional(),
+      body("event", "Invalid event").optional(),
+      body("dish", "Invalid dish").optional(),
+      body("corporateEvent", "Invalid corporateEvent").optional(),
+      body("ribbon", "Invalid name").optional(),
+    ],
+    caterer_controller.eventSpecificCaterers
   );
 
   // caterer info
