@@ -186,37 +186,32 @@ exports.caterer_details = async (req, res) => {
     // console.log(caterer);
     if (caterer) {
       const result = [];
-      let menus = await Menu.find({ catererId: caterer._id }).populate({
+      let menus = await Menu.findOne({ catererId: caterer._id }).populate({
         path:
           "catererMenus.category catererMenus.menus.menuDetails.itemCategory catererMenus.menus.ribbon",
         skipInvalidIds: true,
       });
       // console.log(menus);
-      let items = await Item.find({ catererId: caterer._id }).populate({
+      let items = await Item.findOne({ catererId: caterer._id }).populate({
         path: "catererItems.category catererItems.items.ribbon",
         skipInvalidIds: true,
       });
-      if (menus.length) {
-        menus = await menus.map((menu) => {
-          // console.log(menu);
-          return menu.catererMenus.map((combo) => {
-            return { items: combo.menus, category: combo.category.Category };
-          });
-        });
-        // [0].catererMenus.map((menu) => {
-        //   // console.log(menu);
-        //   return { items: menu.menus, category: menu.category.Category };
-        // });
-      }
-      if (items.length) {
-        items = await items.map((item) => {
-          // console.log(item);
-          return item.catererItems.map((dish) => {
-            return { items: dish.items, category: dish.category.Category };
-          });
-        });
-      }
       // console.log(items);
+      if (menus) {
+        menus = await menus.catererMenus.map((menu) => {
+          // console.log(menu);
+          return {
+            items: menu.menus,
+            category: menu.category.Category,
+          };
+        });
+      }
+      if (items) {
+        items = await items.catererItems.map((item) => {
+          // console.log(item);
+          return { items: item.items, category: item.category.Category };
+        });
+      }
       res.json({
         message: "Caterer Found",
         reviews: caterer.reviews,
