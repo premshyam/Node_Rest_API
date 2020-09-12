@@ -186,18 +186,12 @@ exports.caterer_details = async (req, res) => {
       });
     // console.log(caterer);
     if (caterer) {
-      const result = [];
+      let result = [];
       let menus = await Menu.findOne({ catererId: caterer._id }).populate({
         path:
           "catererMenus.category catererMenus.menus.menuDetails.itemCategory catererMenus.menus.ribbon",
         skipInvalidIds: true,
       });
-      // console.log(menus);
-      let items = await Item.findOne({ catererId: caterer._id }).populate({
-        path: "catererItems.category catererItems.items.ribbon",
-        skipInvalidIds: true,
-      });
-      // console.log(items);
       if (menus) {
         menus = await menus.catererMenus.map((menu) => {
           // console.log(menu);
@@ -206,18 +200,27 @@ exports.caterer_details = async (req, res) => {
             category: menu.category.Category,
           };
         });
+        result = await result.concat(menus);
       }
+      // console.log(menus);
+      let items = await Item.findOne({ catererId: caterer._id }).populate({
+        path: "catererItems.category catererItems.items.ribbon",
+        skipInvalidIds: true,
+      });
       if (items) {
         items = await items.catererItems.map((item) => {
           // console.log(item);
           return { items: item.items, category: item.category.Category };
         });
+        result = await result.concat(items);
       }
+      // console.log(items);
+      console.log(result);
       res.json({
         message: "Caterer Found",
         reviews: caterer.reviews,
         caterer: caterer,
-        items: menus.concat(items),
+        items: result,
       });
     } else {
       res.json({
