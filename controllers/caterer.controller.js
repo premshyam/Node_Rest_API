@@ -196,28 +196,32 @@ exports.caterer_details = async (req, res) => {
         path: "catererItems.category catererItems.items.ribbon",
         skipInvalidIds: true,
       });
-      console.log(items);
       if (menus.length) {
-        menus = await menus[0].catererMenus.map((menu) => {
+        menus = await menus.map((menu) => {
           // console.log(menu);
-          return { items: menu.menus, category: menu.category.Category };
+          return menu.catererMenus.map((combo) => {
+            return { items: combo.menus, category: combo.category.Category };
+          });
         });
+        // [0].catererMenus.map((menu) => {
+        //   // console.log(menu);
+        //   return { items: menu.menus, category: menu.category.Category };
+        // });
       }
       if (items.length) {
-        items = await items[0].catererItems.map((item) => {
+        items = await items.map((item) => {
           // console.log(item);
-          return { items: item.items, category: item.category.Category };
+          return item.catererItems.map((dish) => {
+            return { items: dish.items, category: dish.category.Category };
+          });
         });
       }
-      // result.push(items);
-      // result.push(menus);
       // console.log(items);
       res.json({
         message: "Caterer Found",
         reviews: caterer.reviews,
         caterer: caterer,
-        // menus: menus, //[0].catererMenus,
-        items: menus.concat(items), //[0].catererItems,
+        items: menus.concat(items),
       });
     } else {
       res.json({
