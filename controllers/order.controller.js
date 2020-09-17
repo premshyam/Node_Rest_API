@@ -135,6 +135,10 @@ exports.updateOrder = async (req, res) => {
           message: "Something went wrong",
           error: err,
         });
+      } else if (order == null) {
+        res.status(HttpStatus.NOT_FOUND).json({
+          message: "Order not found",
+        });
       } else {
         res.json({
           message: "Order Updated Successfully",
