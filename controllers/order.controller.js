@@ -1,11 +1,9 @@
 const HttpStatus = require("http-status-codes");
 const Order = require("../models/Order");
 const { validationResult } = require("express-validator");
-const axios = require("axios");
-const qs = require("querystring");
 
 // Create New Order
-exports.create_order = async (req, res) => {
+exports.createOrder = async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(HttpStatus.UNPROCESSABLE_ENTITY).json({
@@ -13,57 +11,28 @@ exports.create_order = async (req, res) => {
       errors: errors.array(),
     });
   }
+  let date = new Date();
+  let orderAmount = req.body.orderAmount;
+  let paymentAmount;
+  if (orderAmount > 20000) {
+    paymentAmount = 20000;
+  } else {
+    paymentAmount = orderAmount;
+  }
   let order = new Order({
-    customer_id: req.body.userId,
-    caterer_id: req.body.caterer_id,
-    menu_id: req.body.menu_id,
-    cart: req.body.cartItems,
-    quantity: req.body.quantity,
-    order_amount: req.body.order_amount,
-    order_date: req.body.order_date,
-    delivery_date: req.body.delivery_date,
+    customer: req.body.userId,
+    shoppingCart: req.body.shoppingCart,
+    orderAmount: orderAmount,
+    orderDate: date.toLocaleString("en-IN"),
+    paymentAmount: paymentAmount,
+    paymentStatus: "Pending",
   });
 
   order
     .save()
     .then((result) => {
-      return result;
-    })
-    .then((result) => {
-      return Order.findById(result._id)
-        .populate("customer_id")
-        .populate("caterer_id")
-        .populate("menu_id")
-        .then((result) => {
-          return result;
-        });
-    })
-    .then((result) => {
-      // console.log(result);
-      data = {
-        appId: process.env.CASHFREE_APP_ID,
-        secretKey: process.env.CASHFREE_SECRET_KEY,
-        orderId: result._id.toString(),
-        orderAmount: result.order_amount,
-        customerName:
-          result.customer_id.first_name + result.customer_id.last_name,
-        customerPhone: result.customer_id.phone,
-        customerEmail: result.customer_id.email,
-        // returnUrl: "http://localhost:/3000/checkout/result"
-      };
-      axios
-        .post(process.env.CASHFREE_ORDER_API, qs.stringify(data), {
-          headers: {
-            "Content-Type": "application/x-www-form-urlencoded",
-          },
-        })
-        .then((result) => {
-          console.log(result.data);
-          res.json(result.data);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+      console.log(result);
+      res.json(result);
     })
     .catch((err) => {
       res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
@@ -91,7 +60,7 @@ exports.orders = async (req, res) => {
 };
 
 // Order Details
-exports.order_details = async (req, res) => {
+exports.orderDetails = async (req, res) => {
   await Order.findOne({ _id: req.params.id })
     .then((result) => {
       if (result) {
@@ -115,15 +84,8 @@ exports.order_details = async (req, res) => {
 };
 
 // Customer Orders
-exports.customer_orders = async (req, res) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return res.status(HttpStatus.UNPROCESSABLE_ENTITY).json({
-      message: "Server side validation failed",
-      errors: errors.array(),
-    });
-  }
-  await Order.find({ customer_id: req.body.userId })
+exports.customerOrders = async (req, res) => {
+  await Order.find({ customer: req.body.userId })
     .then((result) => {
       res.json({
         message: result.length + " Orders Found",
@@ -139,34 +101,34 @@ exports.customer_orders = async (req, res) => {
 };
 
 // Caterer Orders
-exports.caterer_orders = async (req, res) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return res.status(HttpStatus.UNPROCESSABLE_ENTITY).json({
-      message: "Server side validation failed",
-      errors: errors.array(),
-    });
-  }
-  await Order.find({ caterer_id: req.body.userId })
-    .then((result) => {
-      res.json({
-        message: result.length + " Orders Found",
-        orders: result,
-      });
-    })
-    .catch((err) => {
-      res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
-        message: "Something went wrong",
-        errors: err,
-      });
-    });
-};
+// exports.caterer_orders = async (req, res) => {
+//   const errors = validationResult(req);
+//   if (!errors.isEmpty()) {
+//     return res.status(HttpStatus.UNPROCESSABLE_ENTITY).json({
+//       message: "Server side validation failed",
+//       errors: errors.array(),
+//     });
+//   }
+//   await Order.find({ caterer_id: req.body.userId })
+//     .then((result) => {
+//       res.json({
+//         message: result.length + " Orders Found",
+//         orders: result,
+//       });
+//     })
+//     .catch((err) => {
+//       res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
+//         message: "Something went wrong",
+//         errors: err,
+//       });
+//     });
+// };
 
 // Update Order Status
-exports.update_order = async (req, res) => {
+exports.updateOrder = async (req, res) => {
   await Order.findByIdAndUpdate(
     req.params.id,
-    { $set: { order_status: req.body.status } },
+    { $set: { paymentStatus: req.body.paymentStatus } },
     (err, order) => {
       if (err) {
         res.status(HttpStatus.UNPROCESSABLE_ENTITY).json({
@@ -176,7 +138,6 @@ exports.update_order = async (req, res) => {
       } else {
         res.json({
           message: "Order Updated Successfully",
-          order: order,
         });
       }
     }

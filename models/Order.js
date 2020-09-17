@@ -4,26 +4,18 @@ const Schema = mongoose.Schema;
 mongoose.set("useFindAndModify", false);
 
 let orderSchema = new Schema({
-  customer_id: {
+  customer: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Customer",
     required: true,
   },
-  caterer_id: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Caterer",
+  shoppingCart: {
+    type: Object,
     required: true,
   },
-  menu_id: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Menu",
-    required: true,
-  },
-  cart: { type: {}, required: true },
-  quantity: { type: Number, required: true },
-  order_amount: { type: Number, required: true },
-  order_date: { type: Date, required: true },
-  delivery_date: { type: Date, required: true },
-  order_status: { type: String, required: true, default: "active" },
+  orderAmount: { type: Number, required: true },
+  orderDate: { type: Date, required: true },
+  paymentAmount: { type: Number, required: true },
+  paymentStatus: { type: String, required: true },
 });
 module.exports = mongoose.model("Order", orderSchema);
