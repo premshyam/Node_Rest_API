@@ -414,3 +414,73 @@ exports.resend_otp = async (req, res) => {
       });
     });
 };
+
+exports.forgotPassword = async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(HttpStatus.UNPROCESSABLE_ENTITY).json({
+      message: "Server side validation failed",
+      errors: errors.array(),
+    });
+  }
+  const email = req.body.email;
+  await Customer.findOne({ email: email })
+    .then((customer) => {
+      // generate OTP for this Customer
+      const otp = new Otp({
+        _userId: customer.id,
+        otp: Math.floor(100000 + Math.random() * 900000),
+      });
+      return otp.save();
+    })
+    .then((otpObj) => {
+      // console.log(otpObj);
+      return transporter.sendMail({
+        to: email,
+        from: "info@catersmart.in",
+        subject: otpObj.otp + " is the OTP",
+        html: `
+      <p>${otpObj.otp} is the OTP to verify your email at catersmart.</p>
+     `,
+      });
+    })
+    .then((result) => {
+      console.log(result);
+      res.json({
+        message: "Sent OTP",
+      });
+    })
+    .catch((err) => {
+      // console.log(err);
+      res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
+        message: "Something went wrong",
+        errors: err,
+      });
+    });
+};
+
+exports.updatePassword = async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(HttpStatus.UNPROCESSABLE_ENTITY).json({
+      message: "Server side validation failed",
+      errors: errors.array(),
+    });
+  }
+  await Customer.findOne({ email: req.body.email })
+    .then(async (customer) => {
+      customer.password = await bcrypt.hash(req.body.password, 12);
+      return customer.save();
+    })
+    .then((customer) => {
+      res.json({
+        message: "Password Updated successfully",
+      });
+    })
+    .catch((err) => {
+      res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
+        message: "Something went wrong",
+        errors: err,
+      });
+    });
+};

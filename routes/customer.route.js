@@ -147,4 +147,45 @@ module.exports = (app) => {
     isAuth,
     customer_controller.delete_customer
   );
+
+  // Forgot Password
+  app.post(
+    "/api/forgot_password/",
+    [
+      body("email", "Email not registered")
+        .isEmail()
+        .custom((email) => {
+          return Customer.isCustomerEmail(email);
+        }),
+    ],
+    customer_controller.forgotPassword
+  );
+
+  // Update Password
+  app.post(
+    "/api/update_password/",
+    [
+      body("email", "Email not registered")
+        .isEmail()
+        .custom((email) => {
+          return Customer.isCustomerEmail(email);
+        }),
+      body("otp", "Invalid OTP").isNumeric().isLength({ min: 6, max: 6 }),
+      body(
+        "password",
+        "Password should be combination of one uppercase , one lower case, one special char, one digit and min 8 , max 15 char long"
+      ).matches(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9]).{8,}$/, "i"),
+      body(
+        "confirmation",
+        "Password confirmation does not match password"
+      ).custom((value, { req }) => {
+        if (value !== req.body.password) {
+          throw new Error("Password confirmation does not match password");
+        }
+        // Indicates the success of this synchronous custom validator
+        return true;
+      }),
+    ],
+    customer_controller.updatePassword
+  );
 };
