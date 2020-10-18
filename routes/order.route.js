@@ -17,11 +17,12 @@ module.exports = (app) => {
   // Customer Orders
   app.get("/api/customer_orders/", isAuth, orderController.customerOrders);
 
+  // Customer Order Details
+  app.get("/api/customer_order_details/:id", isAuth, orderController.customerOrderDetails);
+
   // Fetch All Orders
   //app.get("/api/orders",  orderController.orders);
 
-  // Order Details
-  //app.get("/api/order/:id", isAuth, orderController.orderDetails);
 
   // Caterer Orders
   // app.get(
