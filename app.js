@@ -12,6 +12,7 @@ const mongoose = require("mongoose");
 const serviceableAreaRoutes = require("./routes/serviceableArea");
 const filtersRoutes = require("./routes/filters");
 const couponsRoutes = require("./routes/coupons");
+const paymentsRoutes = require("./routes/payments");
 const errorHandler = require("./util/error.handler");
 
 //create the app
@@ -45,6 +46,7 @@ require("./routes/order.route")(app);
 app.use("/api/serviceableArea", serviceableAreaRoutes);
 app.use("/api/filters", filtersRoutes);
 app.use("/api/coupons", couponsRoutes);
+app.use("/api/payments", paymentsRoutes);
 app.get("/", (req, res) => {
   res.send("Welcome");
 });
