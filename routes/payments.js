@@ -9,7 +9,6 @@ const router = express.Router();
 // Create Payment
 router.post(
   "/create_payment",
-  isAuth,
   [
     body("orderId", "Invalid order Id")
     .custom((orderId) => {
