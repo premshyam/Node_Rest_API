@@ -172,25 +172,23 @@ exports.delete_order = async (req, res) => {
 };
 
 // Customer Order Details
-exports.customerOrderDetails = async (req, res) => {
-  await Order.findById(req.params.id, (err, order)=>{
+exports.customerOrderDetails = (req, res) => {
+  Order.findById(req.params.id, (err, order) => {
     if (err) {
       res.status(HttpStatus.UNPROCESSABLE_ENTITY).json({
         message: "Something went wrong",
         error: err,
       });
-    } 
-    else if (order == null) {
+    } else if (order == null) {
       res.status(HttpStatus.NOT_FOUND).json({
         message: "Order not found",
       });
-    } 
-    else {
+    } else {
       // console.log(order)
       res.json({
         message: "Order Found",
-        order: order
+        order: order,
       });
     }
-  })
-}
+  });
+};

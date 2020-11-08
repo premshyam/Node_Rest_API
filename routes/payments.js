@@ -10,25 +10,21 @@ const router = express.Router();
 router.post(
   "/create_payment",
   [
-    body("orderId", "Invalid order Id")
-    .custom((orderId) => {
-              return Order.findById(orderId).then((order) => {
-                if (order) {
-                  return true;
-                } else {
-                  return Promise.reject("order not found");
-                }
-              });
-            }),
+    body("orderId", "Invalid order Id").custom((orderId) => {
+      return Order.findById(orderId).then((order) => {
+        if (order) {
+          return true;
+        } else {
+          return Promise.reject("order not found");
+        }
+      });
+    }),
     body("orderTransactionId", "Enter a valid order Transaction Id").isString(),
   ],
   paymentController.createPayment
 );
 
 // Update Payment
-router.patch(
-    "/update_payment/:id",
-    paymentController.updatePayment
-  );
+router.patch("/update_payment/:id", paymentController.updatePayment);
 
 module.exports = router;

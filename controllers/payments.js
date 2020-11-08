@@ -1,9 +1,10 @@
 const HttpStatus = require("http-status-codes");
 const Payment = require("../models/Payment");
+const Order = require("../models/Order");
 const { validationResult } = require("express-validator");
 
 // Create Payment
-exports.createPayment = async (req, res, next) => {
+exports.createPayment = (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(HttpStatus.UNPROCESSABLE_ENTITY).json({
@@ -12,12 +13,12 @@ exports.createPayment = async (req, res, next) => {
     });
   }
   const payment = new Payment(req.body);
-  await payment
+  payment
     .save()
     .then((paymentObj) => {
       res.json({
         message: "payment attempt created",
-        payment: paymentObj
+        payment: paymentObj,
       });
     })
     .catch((err) => {
@@ -29,10 +30,11 @@ exports.createPayment = async (req, res, next) => {
 };
 
 // Update Payment
-exports.updatePayment = async (req, res, next) => {
-  await Payment.findOneAndUpdate(
-    {orderTransactionId: req.params.id},
-    { $set: req.body }, {new: true},
+exports.updatePayment = (req, res, next) => {
+  Payment.findOneAndUpdate(
+    { orderTransactionId: req.params.id },
+    { $set: req.body },
+    { new: true },
     (err, payment) => {
       if (err) {
         res.status(HttpStatus.UNPROCESSABLE_ENTITY).json({
@@ -44,11 +46,29 @@ exports.updatePayment = async (req, res, next) => {
           message: "Payment not found",
         });
       } else {
-        res.json({
-          message: "Payment Updated Successfully",
-          payment: payment
-        });
+        Order.findByIdAndUpdate(
+          payment.orderId,
+          { $set: { paymentStatus: payment.txStatus } },
+          { new: true },
+          (error, order) => {
+            if (error) {
+              res.status(HttpStatus.UNPROCESSABLE_ENTITY).json({
+                message: "Something went wrong",
+                error: error,
+              });
+            } else if (order == null) {
+              res.status(HttpStatus.NOT_FOUND).json({
+                message: "Order not found",
+              });
+            } else {
+              res.json({
+                message: "Payment Updated Successfully",
+                payment: payment,
+              });
+            }
+          }
+        );
       }
     }
   );
-}
+};
