@@ -27,6 +27,7 @@ module.exports = (app) => {
   const GeneralCoupon = require("../models/GeneralCoupon");
   const CatererCoupon = require("../models/CatererCoupon");
   const Otp = require("../models/Otp");
+  const Logistic = require("../models/Logistic");
   const filterParent = {
     name: "filters",
     icon: "Filter",
@@ -107,6 +108,7 @@ module.exports = (app) => {
       Cart,
       Order,
       Otp,
+      Logistic,
       { resource: CateringType, options: { parent: filterParent } },
       { resource: Dietary, options: { parent: filterParent } },
       { resource: Cuisine, options: { parent: filterParent } },

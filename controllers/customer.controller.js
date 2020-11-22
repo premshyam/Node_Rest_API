@@ -326,7 +326,7 @@ exports.addCatererToFavourite = async (req, res) => {
     });
 };
 
-exports.otp_verification = async (req, res) => {
+exports.otp_verification = (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(HttpStatus.UNPROCESSABLE_ENTITY).json({
@@ -334,7 +334,7 @@ exports.otp_verification = async (req, res) => {
       errors: errors.array(),
     });
   }
-  await Otp.findOne({ otp: req.body.otp })
+  Otp.findOne({ otp: req.body.otp })
     .then((otpObj) => {
       if (!otpObj) {
         res.status(HttpStatus.UNPROCESSABLE_ENTITY).json({
@@ -365,6 +365,50 @@ exports.otp_verification = async (req, res) => {
         res.json({
           message: "Customer successfully verified",
           customer: customer,
+        });
+      }
+    })
+    .catch((err) => {
+      res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
+        message: "Something went wrong",
+        errors: err,
+      });
+    });
+};
+
+exports.forgot_password_otp = (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(HttpStatus.UNPROCESSABLE_ENTITY).json({
+      message: "Server side validation failed",
+      errors: errors.array(),
+    });
+  }
+  Otp.findOne({ otp: req.body.otp })
+    .then((otpObj) => {
+      if (otpObj) {
+        Customer.findById(otpObj._userId, (err, customer) => {
+          if (err) {
+            res.status(HttpStatus.UNPROCESSABLE_ENTITY).json({
+              message: "OTP expired or Invalid.",
+              errors: err,
+            });
+          } else {
+            if (customer.email == req.body.email) {
+              res.json({
+                message: "OTP verified",
+              });
+            } else {
+              res.status(HttpStatus.BAD_REQUEST).json({
+                message: "OTP expired or Invalid.",
+              });
+            }
+          }
+        });
+      } else {
+        res.status(HttpStatus.UNPROCESSABLE_ENTITY).json({
+          message: "OTP expired or Invalid.",
+          errors: [],
         });
       }
     })

@@ -389,7 +389,7 @@ exports.caterers = async (req, res) => {
     .select("-email -phone")
     .populate({
       path:
-        "serviceableArea cateringType dietaryRestrictions cuisineType vendorType event ribbon",
+        "serviceableArea cateringType dietaryRestrictions cuisineType vendorType event ribbon logistic",
       skipInvalidIds: true,
     })
     .then((result) => {
@@ -519,7 +519,7 @@ exports.eventSpecificCaterers = async (req, res) => {
     .select("-email -phone")
     .populate({
       path:
-        "serviceableArea cateringType dietaryRestrictions cuisineType vendorType event ribbon",
+        "serviceableArea cateringType dietaryRestrictions cuisineType vendorType event ribbon logistic",
       skipInvalidIds: true,
     })
     .then((result) => {

@@ -81,6 +81,17 @@ module.exports = (app) => {
     customer_controller.otp_verification
   );
 
+  // Customer OTP verification
+  app.post(
+    "/api/customer_forgot_password_otp/",
+    // isAuth,
+    [
+      body("otp", "Invalid OTP").isNumeric().isLength({ min: 6, max: 6 }),
+      body("email", "Enter valid email").isEmail(),
+    ],
+    customer_controller.forgot_password_otp
+  );
+
   // Customer add to favourite
   app.post(
     "/api/customer/add_to_favourite/",

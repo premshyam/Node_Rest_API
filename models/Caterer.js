@@ -56,6 +56,9 @@ let catererSchema = new Schema({
   service: [
     { type: mongoose.Schema.Types.ObjectId, ref: "Service", required: true },
   ],
+  logistic: [
+    { type: mongoose.Schema.Types.ObjectId, ref: "Logistic", required: true },
+  ],
   description: { type: String, required: true },
   email: { type: String, required: true },
   password: { type: String, required: true, select: false },
