@@ -181,7 +181,7 @@ exports.caterer_details = async (req, res) => {
       .select("-email")
       .populate({
         path:
-          "serviceableArea cateringType dietaryRestrictions cuisineType vendorType event ribbon service",
+          "serviceableArea cateringType dietaryRestrictions cuisineType vendorType event ribbon service logistic",
         skipInvalidIds: true,
       });
     // console.log(caterer);
